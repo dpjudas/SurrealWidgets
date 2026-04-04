@@ -2,91 +2,8 @@
 #include <fstream>
 #include <stdexcept>
 #include <vector>
-#include <surrealwidgets/core/widget.h>
-#include <surrealwidgets/core/resourcedata.h>
-#include <surrealwidgets/core/image.h>
-#include <surrealwidgets/core/theme.h>
-#include <surrealwidgets/window/window.h>
-#include <surrealwidgets/widgets/dropdown/dropdown.h>
-#include <surrealwidgets/widgets/textedit/textedit.h>
-#include <surrealwidgets/widgets/mainwindow/mainwindow.h>
-#include <surrealwidgets/widgets/dialog/messagebox.h>
-#include <surrealwidgets/widgets/layout/vboxlayout.h>
-#include <surrealwidgets/widgets/layout/hboxlayout.h>
-#include <surrealwidgets/widgets/listview/listview.h>
-#include <surrealwidgets/widgets/imagebox/imagebox.h>
-#include <surrealwidgets/widgets/textlabel/textlabel.h>
-#include <surrealwidgets/widgets/pushbutton/pushbutton.h>
-#include <surrealwidgets/widgets/checkboxlabel/checkboxlabel.h>
-#include <surrealwidgets/widgets/lineedit/lineedit.h>
-#include <surrealwidgets/widgets/tabwidget/tabwidget.h>
-#include <surrealwidgets/widgets/dialog/textinputdialog.h>
 #include "stylesheet.h"
-
-// ************************************************************
-// Prototypes
-// ************************************************************
-
-class LauncherWindowTab1 : public Widget
-{
-public:
-	LauncherWindowTab1(Widget parent);
-private:
-	TextEdit* Text = nullptr;
-};
-
-class LauncherWindowTab2 : public Widget
-{
-public:
-	LauncherWindowTab2(Widget parent);
-private:
-	TextLabel* WelcomeLabel = nullptr;
-	TextLabel* VersionLabel = nullptr;
-	TextLabel* SelectLabel = nullptr;
-	TextLabel* GeneralLabel = nullptr;
-	TextLabel* ExtrasLabel = nullptr;
-	CheckboxLabel* FullscreenCheckbox = nullptr;
-	CheckboxLabel* DisableAutoloadCheckbox = nullptr;
-	CheckboxLabel* DontAskAgainCheckbox = nullptr;
-	CheckboxLabel* LightsCheckbox = nullptr;
-	CheckboxLabel* BrightmapsCheckbox = nullptr;
-	CheckboxLabel* WidescreenCheckbox = nullptr;
-	ListView* GamesList = nullptr;
-};
-
-class LauncherWindowTab3 : public Widget
-{
-public:
-	LauncherWindowTab3(Widget parent);
-private:
-	TextLabel* Label = nullptr;
-	Dropdown* Choices = nullptr;
-	PushButton* Popup = nullptr;
-	PushButton* QuestionPopup = nullptr;
-	PushButton* TextInputPopup = nullptr;
-};
-
-class LauncherWindow : public Widget
-{
-public:
-	LauncherWindow();
-private:
-	void OnClose() override;
-
-	ImageBox* Logo = nullptr;
-	TabWidget* Pages = nullptr;
-	PushButton* ExitButton = nullptr;
-
-	LauncherWindowTab1* Tab1 = nullptr;
-	LauncherWindowTab2* Tab2 = nullptr;
-	LauncherWindowTab3* Tab3 = nullptr;
-
-	std::shared_ptr<CustomCursor> Cursor;
-};
-
-// ************************************************************
-// UI implementation
-// ************************************************************
+#include "example.h"
 
 LauncherWindow::LauncherWindow(): Widget(nullptr, WidgetType::Window)
 {
@@ -174,7 +91,9 @@ void LauncherWindow::OnClose()
 	DisplayWindow::ExitLoop();
 }
 
-LauncherWindowTab1::LauncherWindowTab1(Widget parent): Widget(nullptr)
+/////////////////////////////////////////////////////////////////////////////
+
+LauncherWindowTab1::LauncherWindowTab1(Widget parent)
 {
 	Text = new TextEdit(this);
 
@@ -193,7 +112,9 @@ LauncherWindowTab1::LauncherWindowTab1(Widget parent): Widget(nullptr)
 	SetLayout(layout);
 }
 
-LauncherWindowTab2::LauncherWindowTab2(Widget parent): Widget(nullptr)
+/////////////////////////////////////////////////////////////////////////////
+
+LauncherWindowTab2::LauncherWindowTab2(Widget parent)
 {
 	WelcomeLabel = new TextLabel(this);
 	VersionLabel = new TextLabel(this);
@@ -271,7 +192,9 @@ LauncherWindowTab2::LauncherWindowTab2(Widget parent): Widget(nullptr)
 	SetLayout(layout);
 }
 
-LauncherWindowTab3::LauncherWindowTab3(Widget parent): Widget(nullptr)
+/////////////////////////////////////////////////////////////////////////////
+
+LauncherWindowTab3::LauncherWindowTab3(Widget parent)
 {
 	Label = new TextLabel(this);
 	Choices = new Dropdown(this);
@@ -330,57 +253,43 @@ LauncherWindowTab3::LauncherWindowTab3(Widget parent): Widget(nullptr)
 	SetLayout(layout);
 }
 
-// ************************************************************
-// Shared code
-// ************************************************************
+/////////////////////////////////////////////////////////////////////////////
 
-enum class Backend
+std::vector<SingleFontData> ExampleResourceLoader::LoadFont(const std::string& name)
 {
-	Default, Win32, SDL2, X11, Wayland
-};
-
-enum class Theme
-{
-	Default, Light, Dark
-};
-
-class ExampleResourceLoader : public ResourceLoader
-{
-public:
-	std::vector<SingleFontData> LoadFont(const std::string& name) override
+	if (name == "system" || name == "monospace")
 	{
-		if (name == "system" || name == "monospace")
-		{
-			SingleFontData fontdata;
-			fontdata.fontdata = ReadAllBytes("OpenSans.ttf");
-			return { std::move(fontdata) };
-		}
-		else
-		{
-			SingleFontData fontdata;
-			fontdata.fontdata = ReadAllBytes(name + ".ttf");
-			return { std::move(fontdata) };
-		}
+		SingleFontData fontdata;
+		fontdata.fontdata = ReadAllBytes("OpenSans.ttf");
+		return { std::move(fontdata) };
 	}
+	else
+	{
+		SingleFontData fontdata;
+		fontdata.fontdata = ReadAllBytes(name + ".ttf");
+		return { std::move(fontdata) };
+	}
+}
 	
-	std::vector<uint8_t> ReadAllBytes(const std::string& filename) override
-	{
-		std::ifstream file(filename, std::ios::binary | std::ios::ate);
-		if (!file)
-			throw std::runtime_error("Could not open: " + filename);
+std::vector<uint8_t> ExampleResourceLoader::ReadAllBytes(const std::string& filename)
+{
+	std::ifstream file(filename, std::ios::binary | std::ios::ate);
+	if (!file)
+		throw std::runtime_error("Could not open: " + filename);
 
-		std::streamsize size = file.tellg();
-		file.seekg(0, std::ios::beg);
+	std::streamsize size = file.tellg();
+	file.seekg(0, std::ios::beg);
 
-		std::vector<uint8_t> buffer(size);
-		if (!file.read(reinterpret_cast<char*>(buffer.data()), size))
-			throw std::runtime_error("Could not read: " + filename);
+	std::vector<uint8_t> buffer(size);
+	if (!file.read(reinterpret_cast<char*>(buffer.data()), size))
+		throw std::runtime_error("Could not read: " + filename);
 
-		return buffer;
-	}
-};
+	return buffer;
+}
 
-int example(Backend backend = Backend::Default, Theme theme = Theme::Default)
+/////////////////////////////////////////////////////////////////////////////
+
+int example(Backend backend, Theme theme)
 {
 	ResourceLoader::Set(std::make_unique<ExampleResourceLoader>());
 
@@ -419,49 +328,3 @@ int example(Backend backend = Backend::Default, Theme theme = Theme::Default)
 
 	return 0;
 }
-
-// ************************************************************
-// Platform-specific code
-// ************************************************************
-
-#ifdef WIN32
-
-#include <Windows.h>
-
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
-
-int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
-{
-	SetProcessDPIAware();
-	example();
-}
-
-#else
-
-#include <fstream>
-#include <vector>
-#include <string>
-#include <stdexcept>
-
-int main(int argc, const char** argv)
-{
-	Backend backend = Backend::Default;
-	Theme theme = Theme::Default;
-
-	for (auto i = 1; i < argc; i++)
-	{
-		std::string s = argv[i];
-
-		if (s == "light") { theme = Theme::Light; continue; }
-		if (s == "dark")  { theme = Theme::Dark;  continue; }
-
-		if (s == "sdl2")    { backend = Backend::SDL2;    continue; }
-		if (s == "x11")     { backend = Backend::X11;     continue; }
-		if (s == "wayland") { backend = Backend::Wayland; continue; }
-		if (s == "win32")   { backend = Backend::Win32;   continue; } // lol
-	}
-
-	example(backend, theme);
-}
-
-#endif

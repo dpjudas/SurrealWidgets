@@ -429,7 +429,9 @@ option(SURREALWIDGETS_BUILD_EXAMPLE "Build the surrealwidgets example applicatio
 if(SURREALWIDGETS_BUILD_EXAMPLE)
 	source_group("example" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/example/.+")
 	add_executable(surrealwidgets_example WIN32
+		example/main.cpp
 		example/example.cpp
+		example/example.h
 		example/stylesheet.h
 	)
 	target_compile_options(surrealwidgets_example PRIVATE ${CXX_WARNING_FLAGS})
