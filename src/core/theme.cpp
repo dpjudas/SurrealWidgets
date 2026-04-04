@@ -3,8 +3,10 @@
 #include "core/widget.h"
 #include "core/canvas.h"
 #include "core/font.h"
-#include "theme_style_tokenizer.h"
+#include "theme_stylesheet_tokenizer.h"
+#include "theme_stylesheet_document.h"
 #include "theme_default_stylesheet.h"
+#include "border_image_renderer.h"
 #include <stdexcept>
 
 WidgetStyle::WidgetStyle(WidgetStyle* parentStyle) : ParentStyle(parentStyle)
@@ -215,563 +217,12 @@ LightWidgetTheme::LightWidgetTheme() : StylesheetTheme(theme_default_stylesheet,
 
 /////////////////////////////////////////////////////////////////////////////
 
-static ThemeStyleToken next_token(size_t& pos, const std::vector<ThemeStyleToken>& tokens, bool skip_whitespace = true)
-{
-	ThemeStyleToken token;
-	do
-	{
-		if (pos != tokens.size())
-		{
-			token = tokens[pos];
-			pos++;
-		}
-		else
-		{
-			token = ThemeStyleToken();
-		}
-	} while (token.type == ThemeStyleTokenType::whitespace);
-	return token;
-}
-
-static bool equals(const std::string& a, const std::string& b)
-{
-	return ThemeStyleTokenizer::compare_case_insensitive(a, b);
-}
-
-static bool parse_color(const std::vector<ThemeStyleToken>& tokens, size_t& in_out_pos, Colorf& out_color)
-{
-	size_t pos = in_out_pos;
-	ThemeStyleToken token = next_token(pos, tokens);
-	if (token.type == ThemeStyleTokenType::ident)
-	{
-		if (equals(token.value, "transparent"))
-		{
-			out_color = Colorf(0.0f, 0.0f, 0.0f, 0.0f);
-			in_out_pos = pos;
-			return true;
-		}
-	}
-	else if (token.type == ThemeStyleTokenType::function && equals(token.value, "rgb"))
-	{
-		int color[3] = { 0, 0, 0 };
-		for (int channel = 0; channel < 3; channel++)
-		{
-			token = next_token(pos, tokens);
-			if (token.type == ThemeStyleTokenType::number)
-			{
-				int value = std::atoi(token.value.c_str());
-				value = std::min(255, value);
-				value = std::max(0, value);
-				color[channel] = value;
-			}
-			else if (token.type == ThemeStyleTokenType::percentage)
-			{
-				float value = (float)std::atof(token.value.c_str()) / 100.0f;
-				value = std::min(1.0f, value);
-				value = std::max(0.0f, value);
-				color[channel] = (int)(value * 255.0f);
-			}
-			else
-			{
-				return false;
-			}
-
-			if (channel < 2)
-			{
-				token = next_token(pos, tokens);
-				if (token.type != ThemeStyleTokenType::delim || token.value != ",")
-					return false;
-			}
-		}
-		token = next_token(pos, tokens);
-		if (token.type == ThemeStyleTokenType::bracket_end)
-		{
-			out_color = Colorf(color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f, 1.0f);
-			in_out_pos = pos;
-			return true;
-		}
-	}
-	else if (token.type == ThemeStyleTokenType::function && equals(token.value, "rgba"))
-	{
-		float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		for (int channel = 0; channel < 4; channel++)
-		{
-			token = next_token(pos, tokens);
-			if (token.type == ThemeStyleTokenType::number)
-			{
-				if (channel < 3)
-				{
-					int value = std::atoi(token.value.c_str());
-					value = std::min(255, value);
-					value = std::max(0, value);
-					color[channel] = value / 255.0f;
-				}
-				else
-				{
-					color[channel] = (float)std::atof(token.value.c_str());
-				}
-			}
-			else if (token.type == ThemeStyleTokenType::percentage)
-			{
-				float value = (float)std::atof(token.value.c_str()) / 100.0f;
-				value = std::min(1.0f, value);
-				value = std::max(0.0f, value);
-				color[channel] = value;
-			}
-			else
-			{
-				return false;
-			}
-
-			if (channel < 3)
-			{
-				token = next_token(pos, tokens);
-				if (token.type != ThemeStyleTokenType::delim || token.value != ",")
-					return false;
-			}
-		}
-		token = next_token(pos, tokens);
-		if (token.type == ThemeStyleTokenType::bracket_end)
-		{
-			out_color = Colorf(color[0], color[1], color[2], color[3]);
-			in_out_pos = pos;
-			return true;
-		}
-	}
-	else if (token.type == ThemeStyleTokenType::hash)
-	{
-		if (token.value.length() == 3)
-		{
-			float channels[3] = { 0.0f, 0.0f, 0.0f };
-			for (int c = 0; c < 3; c++)
-			{
-				int v = 0;
-				if (token.value[c] >= '0' && token.value[c] <= '9')
-					v = token.value[c] - '0';
-				else if (token.value[c] >= 'a' && token.value[c] <= 'f')
-					v = token.value[c] - 'a' + 10;
-				else if (token.value[c] >= 'A' && token.value[c] <= 'F')
-					v = token.value[c] - 'A' + 10;
-				else
-					return false;
-				v = (v << 4) + v;
-				channels[c] = v / 255.0f;
-			}
-			out_color = Colorf(channels[0], channels[1], channels[2]);
-			in_out_pos = pos;
-			return true;
-		}
-		else if (token.value.length() == 4)
-		{
-			float channels[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-			for (int c = 0; c < 4; c++)
-			{
-				int v = 0;
-				if (token.value[c] >= '0' && token.value[c] <= '9')
-					v = token.value[c] - '0';
-				else if (token.value[c] >= 'a' && token.value[c] <= 'f')
-					v = token.value[c] - 'a' + 10;
-				else if (token.value[c] >= 'A' && token.value[c] <= 'F')
-					v = token.value[c] - 'A' + 10;
-				else
-					return false;
-				v = (v << 4) + v;
-				channels[c] = v / 255.0f;
-			}
-			out_color = Colorf(channels[0], channels[1], channels[2], channels[3]);
-			in_out_pos = pos;
-			return true;
-		}
-		else if (token.value.length() == 6)
-		{
-			float channels[3] = { 0.0f, 0.0f, 0.0f };
-			for (int c = 0; c < 3; c++)
-			{
-				int v = 0;
-				if (token.value[c * 2] >= '0' && token.value[c * 2] <= '9')
-					v = token.value[c * 2] - '0';
-				else if (token.value[c * 2] >= 'a' && token.value[c * 2] <= 'f')
-					v = token.value[c * 2] - 'a' + 10;
-				else if (token.value[c * 2] >= 'A' && token.value[c * 2] <= 'F')
-					v = token.value[c * 2] - 'A' + 10;
-				else
-					return false;
-
-				v <<= 4;
-
-				if (token.value[c * 2 + 1] >= '0' && token.value[c * 2 + 1] <= '9')
-					v += token.value[c * 2 + 1] - '0';
-				else if (token.value[c * 2 + 1] >= 'a' && token.value[c * 2 + 1] <= 'f')
-					v += token.value[c * 2 + 1] - 'a' + 10;
-				else if (token.value[c * 2 + 1] >= 'A' && token.value[c * 2 + 1] <= 'F')
-					v += token.value[c * 2 + 1] - 'A' + 10;
-				else
-					return false;
-
-				channels[c] = v / 255.0f;
-			}
-			out_color = Colorf(channels[0], channels[1], channels[2]);
-			in_out_pos = pos;
-			return true;
-		}
-		else if (token.value.length() == 8)
-		{
-			float channels[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-			for (int c = 0; c < 4; c++)
-			{
-				int v = 0;
-				if (token.value[c * 2] >= '0' && token.value[c * 2] <= '9')
-					v = token.value[c * 2] - '0';
-				else if (token.value[c * 2] >= 'a' && token.value[c * 2] <= 'f')
-					v = token.value[c * 2] - 'a' + 10;
-				else if (token.value[c * 2] >= 'A' && token.value[c * 2] <= 'F')
-					v = token.value[c * 2] - 'A' + 10;
-				else
-					return false;
-
-				v <<= 4;
-
-				if (token.value[c * 2 + 1] >= '0' && token.value[c * 2 + 1] <= '9')
-					v += token.value[c * 2 + 1] - '0';
-				else if (token.value[c * 2 + 1] >= 'a' && token.value[c * 2 + 1] <= 'f')
-					v += token.value[c * 2 + 1] - 'a' + 10;
-				else if (token.value[c * 2 + 1] >= 'A' && token.value[c * 2 + 1] <= 'F')
-					v += token.value[c * 2 + 1] - 'A' + 10;
-				else
-					return false;
-
-				channels[c] = v / 255.0f;
-			}
-			out_color = Colorf(channels[0], channels[1], channels[2], channels[3]);
-			in_out_pos = pos;
-			return true;
-		}
-	}
-
-	return false;
-}
-
-class ThemeStyleSelector // css selector link
-{
-public:
-	std::string widget; // css element
-	std::string theme; // css class
-	std::string state; // css pseudo class
-};
-
-class ThemeStyleProperty
-{
-public:
-	std::string name;
-	std::vector<ThemeStyleToken> value;
-	bool importantFlag = false;
-};
-
-class ThemeStyleRuleset
-{
-public:
-	std::vector<ThemeStyleSelector> selectors;
-	std::vector<ThemeStyleProperty> properties;
-};
-
-class ThemeSortedSelector
-{
-public:
-	size_t specificity = 0;
-	ThemeStyleSelector* selector = nullptr;
-	ThemeStyleRuleset* ruleset = nullptr;
-
-	bool operator<(const ThemeSortedSelector& other) const { return specificity < other.specificity; }
-};
-
-class ThemeStyleDocument
-{
-public:
-	ThemeStyleDocument(const std::string& stylesheet)
-	{
-		read_stylesheet(stylesheet);
-		create_sorted_selectors();
-	}
-
-	void create_sorted_selectors()
-	{
-		size_t a = 0;
-		for (ThemeStyleRuleset& ruleset : rulesets)
-		{
-			for (ThemeStyleSelector& selector : ruleset.selectors)
-			{
-				size_t b = 0; // #id, not used
-				size_t c = 0;
-				size_t d = (selector.widget != "*") ? 1 : 0;
-				if (selector.theme.empty())
-					c++;
-				if (selector.state.empty())
-					c++;
-
-				ThemeSortedSelector s;
-				s.selector = &selector;
-				s.ruleset = &ruleset;
-				s.specificity = (a << 32) | (b << 24) | (c << 8) | d;
-				selectors.push_back(std::move(s));
-			}
-			a++;
-		}
-		std::stable_sort(selectors.begin(), selectors.end());
-	}
-
-	void read_stylesheet(const std::string& stylesheet)
-	{
-		ThemeStyleTokenizer tokenizer(stylesheet);
-		ThemeStyleToken token;
-
-		while (true)
-		{
-			tokenizer.read(token, true);
-			if (token.type == ThemeStyleTokenType::null)
-			{
-				break;
-			}
-			else if (token.type == ThemeStyleTokenType::atkeyword)
-			{
-				read_at_rule(tokenizer, token);
-			}
-			else if (token.type != ThemeStyleTokenType::whitespace)
-			{
-				read_statement(tokenizer, token);
-			}
-		}
-	}
-
-	void read_statement(ThemeStyleTokenizer& tokenizer, ThemeStyleToken& token)
-	{
-		ThemeStyleRuleset ruleset;
-		while (true)
-		{
-			ThemeStyleSelector selector;
-			if (read_selector(tokenizer, token, selector))
-			{
-				ruleset.selectors.push_back(std::move(selector));
-				if (token.type == ThemeStyleTokenType::delim && token.value == ",")
-				{
-					tokenizer.read(token, true);
-				}
-				else if (token.type == ThemeStyleTokenType::curly_brace_begin)
-				{
-					break;
-				}
-				else
-				{
-					read_end_of_statement(tokenizer, token);
-					return;
-				}
-			}
-			else
-			{
-				read_end_of_statement(tokenizer, token);
-				return;
-			}
-		}
-
-		if (token.type == ThemeStyleTokenType::curly_brace_begin)
-		{
-			while (true)
-			{
-				tokenizer.read(token, true);
-
-				ThemeStyleProperty prop;
-				if (token.type == ThemeStyleTokenType::delim && token.value == "-")
-				{
-					tokenizer.read(token, true);
-					if (token.type == ThemeStyleTokenType::ident)
-					{
-						prop.name = "-" + token.value;
-						tokenizer.read(token, true);
-					}
-					else
-					{
-						bool important_flag = false;
-						tokenizer.read_property_value(token, important_flag);
-					}
-				}
-				else if (token.type == ThemeStyleTokenType::ident)
-				{
-					prop.name = token.value;
-					tokenizer.read(token, true);
-				}
-				else if (token.type == ThemeStyleTokenType::curly_brace_end)
-				{
-					break;
-				}
-				else if (token.type == ThemeStyleTokenType::null)
-				{
-					return;
-				}
-
-				if (token.type == ThemeStyleTokenType::colon)
-				{
-					tokenizer.read(token, true);
-					prop.value = tokenizer.read_property_value(token, prop.importantFlag);
-					ruleset.properties.push_back(std::move(prop));
-				}
-				else
-				{
-					bool important_flag = false;
-					tokenizer.read_property_value(token, important_flag);
-				}
-			}
-			rulesets.push_back(std::move(ruleset));
-		}
-		else
-		{
-			read_end_of_statement(tokenizer, token);
-		}
-	}
-
-	bool read_selector(ThemeStyleTokenizer& tokenizer, ThemeStyleToken& token, ThemeStyleSelector& out_selector)
-	{
-		while (token.type == ThemeStyleTokenType::whitespace)
-			tokenizer.read(token, true);
-
-		ThemeStyleSelector selector_link;
-		if (token.type == ThemeStyleTokenType::ident)
-		{
-			// Simple Selector
-			selector_link.widget = token.value;
-			tokenizer.read(token, false);
-		}
-		else if (token.type == ThemeStyleTokenType::delim && token.value == "*")
-		{
-			// Universal Selector
-			selector_link.widget = "*";
-			tokenizer.read(token, false);
-		}
-		else if (token.type == ThemeStyleTokenType::hash ||
-			token.type == ThemeStyleTokenType::colon ||
-			token.type == ThemeStyleTokenType::square_bracket_begin ||
-			(token.type == ThemeStyleTokenType::delim && token.value == "."))
-		{
-			// Implicit Universal Selector
-			selector_link.widget = "*";
-		}
-		else
-		{
-			return false;
-		}
-
-		while (true)
-		{
-			if (token.type == ThemeStyleTokenType::colon)
-			{
-				tokenizer.read(token, false);
-				if (token.type == ThemeStyleTokenType::ident)
-				{
-					if (!selector_link.state.empty())
-						return false;
-					selector_link.state = token.value;
-				}
-			}
-			else if (token.type == ThemeStyleTokenType::delim && token.value == ".")
-			{
-				tokenizer.read(token, false);
-				if (token.type == ThemeStyleTokenType::ident)
-				{
-					if (!selector_link.theme.empty())
-						return false;
-					selector_link.theme = token.value;
-				}
-				else
-				{
-					return false;
-				}
-			}
-			else
-			{
-				break;
-			}
-
-			tokenizer.read(token, false);
-		}
-
-		while (token.type == ThemeStyleTokenType::whitespace)
-			tokenizer.read(token, true);
-
-		out_selector = selector_link;
-		return true;
-	}
-
-	bool read_end_of_statement(ThemeStyleTokenizer& tokenizer, ThemeStyleToken& token)
-	{
-		int curly_count = 0;
-		while (true)
-		{
-			if (token.type == ThemeStyleTokenType::null)
-			{
-				break;
-			}
-			else if (token.type == ThemeStyleTokenType::curly_brace_begin)
-			{
-				curly_count++;
-			}
-			else if (token.type == ThemeStyleTokenType::curly_brace_end)
-			{
-				curly_count--;
-				if (curly_count <= 0)
-					break;
-			}
-			else if (token.type == ThemeStyleTokenType::semi_colon)
-			{
-				if (curly_count == 0)
-					break;
-			}
-			tokenizer.read(token, true);
-		}
-
-		return curly_count < 0;
-	}
-
-	void read_at_rule(ThemeStyleTokenizer& tokenizer, ThemeStyleToken& token)
-	{
-		// We have no at rules currently - skip it
-		read_end_of_at_rule(tokenizer, token);
-	}
-
-	void read_end_of_at_rule(ThemeStyleTokenizer& tokenizer, ThemeStyleToken& token)
-	{
-		int curly_count = 0;
-		while (true)
-		{
-			if (token.type == ThemeStyleTokenType::null)
-			{
-				break;
-			}
-			else if (token.type == ThemeStyleTokenType::semi_colon && curly_count == 0)
-			{
-				break;
-			}
-			else if (token.type == ThemeStyleTokenType::curly_brace_begin)
-			{
-				curly_count++;
-			}
-			else if (token.type == ThemeStyleTokenType::curly_brace_end)
-			{
-				curly_count--;
-				if (curly_count == 0)
-					break;
-			}
-			tokenizer.read(token, false);
-		}
-	}
-
-	std::vector<ThemeStyleRuleset> rulesets;
-	std::vector<ThemeSortedSelector> selectors;
-};
-
 StylesheetTheme::StylesheetTheme(const std::string& stylesheet, const std::string& usedThemeClass)
 {
-	ThemeStyleDocument doc(stylesheet);
+	ThemeStylesheetDocument doc(stylesheet);
 
 	std::unordered_map<std::string, WidgetStyle*> styles;
-	std::unordered_map<std::string, std::vector<ThemeStyleToken>> variables;
+	std::unordered_map<std::string, std::vector<ThemeStylesheetToken>> variables;
 	auto widget = RegisterStyle(std::make_unique<BasicWidgetStyle>(), "widget");
 	styles["widget"] = widget;
 
@@ -811,24 +262,24 @@ StylesheetTheme::StylesheetTheme(const std::string& stylesheet, const std::strin
 				const std::string& name = prop.name;
 
 				// Grab property value tokens
-				std::vector<ThemeStyleToken> origtokens = prop.value;
+				std::vector<ThemeStylesheetToken> origtokens = prop.value;
 
 				// Insert variables (to do: move to function and clean this up!)
-				std::vector<ThemeStyleToken> tokens;
+				std::vector<ThemeStylesheetToken> tokens;
 				for (auto it = origtokens.begin(); it != origtokens.end(); ++it)
 				{
-					const ThemeStyleToken& t = *it;
-					if (t.type == ThemeStyleTokenType::function && t.value == "var")
+					const ThemeStylesheetToken& t = *it;
+					if (t.type == ThemeStylesheetTokenType::function && t.value == "var")
 					{
 						++it;
-						if (it == origtokens.end() || (*it).type != ThemeStyleTokenType::delim || (*it).value != "-")
+						if (it == origtokens.end() || (*it).type != ThemeStylesheetTokenType::delim || (*it).value != "-")
 						{
 							tokens.clear();
 							break;
 						}
 
 						++it;
-						if (it == origtokens.end() || (*it).type != ThemeStyleTokenType::ident)
+						if (it == origtokens.end() || (*it).type != ThemeStylesheetTokenType::ident)
 						{
 							tokens.clear();
 							break;
@@ -836,7 +287,7 @@ StylesheetTheme::StylesheetTheme(const std::string& stylesheet, const std::strin
 						const auto& variable = variables["-" + (*it).value];
 						tokens.insert(tokens.end(), variable.begin(), variable.end());
 						++it;
-						if (it == origtokens.end() || (*it).type != ThemeStyleTokenType::bracket_end)
+						if (it == origtokens.end() || (*it).type != ThemeStylesheetTokenType::bracket_end)
 						{
 							tokens.clear();
 							break;
@@ -855,7 +306,7 @@ StylesheetTheme::StylesheetTheme(const std::string& stylesheet, const std::strin
 				// To do: maybe use property parsers like ClanLib and UICore does?
 				// That would allow for short form properties
 
-				if (tokens[0].type == ThemeStyleTokenType::ident && (tokens[0].value == "true" || tokens[0].value == "false"))
+				if (tokens[0].type == ThemeStylesheetTokenType::ident && (tokens[0].value == "true" || tokens[0].value == "false"))
 				{
 					if (tokens[0].value == "true")
 					{
@@ -866,19 +317,19 @@ StylesheetTheme::StylesheetTheme(const std::string& stylesheet, const std::strin
 						style->SetBool(partName, name, false);
 					}
 				}
-				else if (tokens[0].type == ThemeStyleTokenType::number)
+				else if (tokens[0].type == ThemeStylesheetTokenType::number)
 				{
 					style->SetDouble(partName, name, std::atof(tokens[0].value.c_str()));
 				}
-				else if (tokens.size() == 2 && tokens[0].type == ThemeStyleTokenType::delim && tokens[0].value == "-" && tokens[1].type == ThemeStyleTokenType::number)
+				else if (tokens.size() == 2 && tokens[0].type == ThemeStylesheetTokenType::delim && tokens[0].value == "-" && tokens[1].type == ThemeStylesheetTokenType::number)
 				{
 					style->SetDouble(partName, name, -std::atof(tokens[1].value.c_str()));
 				}
-				else if (tokens[0].type == ThemeStyleTokenType::string)
+				else if (tokens[0].type == ThemeStylesheetTokenType::string)
 				{
 					style->SetString(partName, name, tokens[0].value);
 				}
-				else if (tokens[0].type == ThemeStyleTokenType::uri)
+				else if (tokens[0].type == ThemeStylesheetTokenType::uri)
 				{
 					style->SetImage(partName, name, Image::LoadResource(tokens[0].value));
 				}
@@ -886,7 +337,7 @@ StylesheetTheme::StylesheetTheme(const std::string& stylesheet, const std::strin
 				{
 					size_t pos = 0;
 					Colorf color;
-					if (parse_color(tokens, pos, color))
+					if (ThemeStylesheetDocument::parse_color(tokens, pos, color))
 					{
 						style->SetColor(partName, name, color);
 					}
@@ -894,258 +345,4 @@ StylesheetTheme::StylesheetTheme(const std::string& stylesheet, const std::strin
 			}
 		}
 	}
-}
-
-/////////////////////////////////////////////////////////////////////////////
-
-void BorderImageRenderer::render(Canvas* canvas, const BorderGeometry& geometry, const BorderImage& style)
-{
-	BorderImageRenderer renderer(canvas, geometry, style);
-	renderer.render();
-}
-
-BorderImageRenderer::BorderImageRenderer(Canvas* canvas, const BorderGeometry& geometry, const BorderImage& style) : canvas(canvas), geometry(geometry), style(style)
-{
-}
-
-void BorderImageRenderer::render()
-{
-	std::shared_ptr<Image> image = style.source;
-	if (image)
-	{
-		int slice_left = get_left_slice_value(image->GetWidth());
-		int slice_right = get_right_slice_value(image->GetWidth());
-		int slice_top = get_top_slice_value(image->GetHeight());
-		int slice_bottom = get_bottom_slice_value(image->GetHeight());
-		bool fill_center = style.slice.center;
-
-		Box border_image_area = get_border_image_area();
-
-		float grid_left = get_left_grid(border_image_area.get_width(), (float)slice_left);
-		float grid_right = get_right_grid(border_image_area.get_width(), (float)slice_right);
-		float grid_top = get_top_grid(border_image_area.get_height(), (float)slice_top);
-		float grid_bottom = get_bottom_grid(border_image_area.get_height(), (float)slice_bottom);
-
-		float x[4] = { border_image_area.left, border_image_area.left + grid_left, border_image_area.right - grid_right, border_image_area.right };
-		float y[4] = { border_image_area.top, border_image_area.top + grid_top, border_image_area.bottom - grid_bottom, border_image_area.bottom };
-		int sx[4] = { 0, slice_left, image->GetWidth() - slice_right, image->GetWidth() };
-		int sy[4] = { 0, slice_top, image->GetHeight() - slice_bottom, image->GetHeight() };
-
-		BorderImageRepeat repeat_x = style.repeat.x;
-		BorderImageRepeat repeat_y = style.repeat.y;
-
-		for (int yy = 0; yy < 3; yy++)
-		{
-			for (int xx = 0; xx < 3; xx++)
-			{
-				if ((xx != 1 && yy != 1) || fill_center)
-					draw_area(image, x[xx], y[yy], x[xx + 1] - x[xx], y[yy + 1] - y[yy], sx[xx], sy[yy], sx[xx + 1] - sx[xx], sy[yy + 1] - sy[yy], repeat_x, repeat_y);
-			}
-		}
-	}
-}
-
-BorderImageRenderer::TileRepeatInfo BorderImageRenderer::repeat_info(float x, float w, int sw, BorderImageRepeat repeat)
-{
-	TileRepeatInfo info;
-
-	if (sw <= 0)
-		return info;
-
-	if (repeat == BorderImageRepeat::repeat)
-	{
-		info.count = (int)std::ceil(w / sw);
-		info.start = x + (w - info.count * sw) * 0.5f;
-		info.width = (float)sw;
-	}
-	else if (repeat == BorderImageRepeat::stretch)
-	{
-		info.start = x;
-		info.width = w;
-		info.count = 1;
-	}
-	else if (repeat == BorderImageRepeat::round)
-	{
-		info.start = x;
-		info.count = std::max((int)std::round(w / sw), 1);
-		info.width = sw * w / (sw * info.count);
-	}
-	else if (repeat == BorderImageRepeat::space)
-	{
-		info.start = x;
-		info.width = (float)sw;
-		info.count = (int)std::floor(w / sw);
-		if (info.count > 1)
-			info.space = w / (info.count - 1) - sw;
-		else if (info.count == 1)
-			info.start = x + (w - info.count * sw) * 0.5f;
-	}
-
-	return info;
-}
-
-void BorderImageRenderer::draw_area(const std::shared_ptr<Image>& image, float x, float y, float w, float h, int sx, int sy, int sw, int sh, BorderImageRepeat repeat_x, BorderImageRepeat repeat_y)
-{
-	TileRepeatInfo tile_x = repeat_info(x, w, sw, repeat_x);
-	TileRepeatInfo tile_y = repeat_info(y, h, sh, repeat_y);
-
-	Box clip = Box::xywh(x, y, w, h);
-	Box src = Box::xywh((float)sx, (float)sy, (float)sw, (float)sh);
-
-	for (int yy = 0; yy < tile_y.count; yy++)
-	{
-		float top = tile_y.start + (tile_y.width + tile_y.space) * yy;
-		float bottom = tile_y.start + (tile_y.width + tile_y.space) * (yy + 1) - tile_y.space;
-
-		for (int xx = 0; xx < tile_x.count; xx++)
-		{
-			float left = tile_x.start + (tile_x.width + tile_x.space) * xx;
-			float right = tile_x.start + (tile_x.width + tile_x.space) * (xx + 1) - tile_x.space;
-
-			Box dest(left, top, right, bottom);
-
-			Box dest_clipped = dest;
-			dest_clipped.clip(clip);
-
-			float tleft = (dest_clipped.left - dest.left) / dest.get_width();
-			float tright = (dest_clipped.right - dest.left) / dest.get_width();
-			float ttop = (dest_clipped.top - dest.top) / dest.get_height();
-			float tbottom = (dest_clipped.bottom - dest.top) / dest.get_height();
-
-			Box src_clipped(mix(src.left, src.right, tleft), mix(src.top, src.bottom, ttop), mix(src.left, src.right, tright), mix(src.top, src.bottom, tbottom));
-
-			canvas->drawImage(
-				image,
-				Rect::ltrb(src_clipped.left, src_clipped.top, src_clipped.right, src_clipped.bottom),
-				Rect::ltrb(dest_clipped.left, dest_clipped.top, dest_clipped.right, dest_clipped.bottom));
-		}
-	}
-}
-
-BorderImageRenderer::Box BorderImageRenderer::get_border_image_area() const
-{
-	Box box = geometry.box;
-
-	BorderImageValue outset_left = style.outset.left;
-	BorderImageValue outset_right = style.outset.right;
-	BorderImageValue outset_top = style.outset.top;
-	BorderImageValue outset_bottom = style.outset.bottom;
-
-	if (outset_left.is_length() || outset_left.is_number())
-		box.left -= outset_left.number();
-
-	if (outset_right.is_length() || outset_right.is_number())
-		box.right += outset_right.number();
-
-	if (outset_top.is_length() || outset_top.is_number())
-		box.top -= outset_top.number();
-
-	if (outset_bottom.is_length() || outset_bottom.is_number())
-		box.bottom += outset_bottom.number();
-
-	return box;
-}
-
-float BorderImageRenderer::get_left_grid(float image_area_width, float auto_width) const
-{
-	BorderImageValue border_image_width = style.width.left;
-
-	if (border_image_width.is_percentage())
-		return border_image_width.number() * image_area_width / 100.0f;
-	else if (border_image_width.is_length())
-		return border_image_width.number();
-	else if (border_image_width.is_number())
-		return border_image_width.number() * (float)geometry.border.left;
-	else
-		return auto_width;
-}
-
-float BorderImageRenderer::get_right_grid(float image_area_width, float auto_width) const
-{
-	BorderImageValue border_image_width = style.width.right;
-
-	if (border_image_width.is_percentage())
-		return border_image_width.number() * image_area_width / 100.0f;
-	else if (border_image_width.is_length())
-		return border_image_width.number();
-	else if (border_image_width.is_number())
-		return border_image_width.number() * (float)geometry.border.right;
-	else
-		return auto_width;
-}
-
-float BorderImageRenderer::get_top_grid(float image_area_height, float auto_height) const
-{
-	BorderImageValue border_image_width = style.width.top;
-
-	if (border_image_width.is_percentage())
-		return border_image_width.number() * image_area_height / 100.0f;
-	else if (border_image_width.is_length())
-		return border_image_width.number();
-	else if (border_image_width.is_number())
-		return border_image_width.number() * (float)geometry.border.top;
-	else
-		return auto_height;
-}
-
-float BorderImageRenderer::get_bottom_grid(float image_area_height, float auto_height) const
-{
-	BorderImageValue border_image_width = style.width.bottom;
-
-	if (border_image_width.is_percentage())
-		return border_image_width.number() * image_area_height / 100.0f;
-	else if (border_image_width.is_length())
-		return border_image_width.number();
-	else if (border_image_width.is_number())
-		return border_image_width.number() * (float)geometry.border.bottom;
-	else
-		return auto_height;
-}
-
-int BorderImageRenderer::get_left_slice_value(int image_width) const
-{
-	BorderImageValue border_image_slice = style.slice.left;
-
-	int v = 0;
-	if (border_image_slice.is_percentage())
-		v = (int)std::round(border_image_slice.number() * image_width / 100.0f);
-	else
-		v = (int)std::round(border_image_slice.number());
-	return std::max(0, std::min(image_width, v));
-}
-
-int BorderImageRenderer::get_right_slice_value(int image_width) const
-{
-	BorderImageValue border_image_slice = style.slice.right;
-
-	int v = 0;
-	if (border_image_slice.is_percentage())
-		v = (int)std::round(border_image_slice.number() * image_width / 100.0f);
-	else
-		v = (int)std::round(border_image_slice.number());
-	return std::max(0, std::min(image_width, v));
-}
-
-int BorderImageRenderer::get_top_slice_value(int image_height) const
-{
-	BorderImageValue border_image_slice = style.slice.top;
-
-	int v = 0;
-	if (border_image_slice.is_percentage())
-		v = (int)std::round(border_image_slice.number() * image_height / 100.0f);
-	else
-		v = (int)std::round(border_image_slice.number());
-	return std::max(0, std::min(image_height, v));
-}
-
-int BorderImageRenderer::get_bottom_slice_value(int image_height) const
-{
-	BorderImageValue border_image_slice = style.slice.bottom;
-
-	int v = 0;
-	if (border_image_slice.is_percentage())
-		v = (int)std::round(border_image_slice.number() * image_height / 100.0f);
-	else
-		v = (int)std::round(border_image_slice.number());
-	return std::max(0, std::min(image_height, v));
 }

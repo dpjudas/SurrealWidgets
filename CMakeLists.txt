@@ -61,9 +61,13 @@ set(SURREALWIDGETS_SOURCES
 	src/core/timer.cpp
 	src/core/widget.cpp
 	src/core/theme.cpp
-	src/core/theme_style_tokenizer.cpp
-	src/core/theme_style_tokenizer.h
 	src/core/theme_default_stylesheet.h
+	src/core/theme_stylesheet_document.cpp
+	src/core/theme_stylesheet_document.h
+	src/core/theme_stylesheet_tokenizer.cpp
+	src/core/theme_stylesheet_tokenizer.h
+	src/core/border_image_renderer.cpp
+	src/core/border_image_renderer.h
 	src/core/utf8reader.cpp
 	src/core/pathfill.cpp
 	src/core/truetypefont.cpp
