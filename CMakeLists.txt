@@ -377,12 +377,6 @@ if(SDL2_FOUND AND NOT SDL3_FOUND)
 	set(SURREALWIDGETS_DEFINES ${SURREALWIDGETS_DEFINES} -DUSE_SDL2)
 endif()
 
-if(MSVC)
-	set(CXX_WARNING_FLAGS /W3)
-else()
-	set(CXX_WARNING_FLAGS -Wall -Wpedantic)
-endif()
-
 add_library(surrealwidgets STATIC ${SURREALWIDGETS_SOURCES} ${SURREALWIDGETS_INCLUDES})
 target_compile_options(surrealwidgets PRIVATE ${SURREALWIDGETS_COMPILE_OPTIONS})
 target_compile_definitions(surrealwidgets PRIVATE ${SURREALWIDGETS_DEFINES})
