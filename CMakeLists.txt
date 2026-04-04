@@ -51,7 +51,7 @@ if(ENABLE_SDL2)
 	endif()
 endif()
 
-set(ZWIDGET_SOURCES
+set(SURREALWIDGETS_SOURCES
 	src/core/canvas.cpp
 	src/core/font.cpp
 	src/core/font_impl.h
@@ -106,7 +106,7 @@ set(ZWIDGET_SOURCES
 	src/systemdialogs/save_file_dialog.cpp
 )
 
-set(ZWIDGET_INCLUDES
+set(SURREALWIDGETS_INCLUDES
 	include/surrealwidgets/core/canvas.h
 	include/surrealwidgets/core/colorf.h
 	include/surrealwidgets/core/font.h
@@ -148,7 +148,7 @@ set(ZWIDGET_INCLUDES
 	include/surrealwidgets/systemdialogs/save_file_dialog.h
 )
 
-set(ZWIDGET_WIN32_SOURCES
+set(SURREALWIDGETS_WIN32_SOURCES
 	src/window/win32/win32_display_backend.cpp
 	src/window/win32/win32_display_backend.h
 	src/window/win32/win32_display_window.cpp
@@ -163,7 +163,7 @@ set(ZWIDGET_WIN32_SOURCES
 	src/core/resourcedata_win.cpp
 )
 
-set(ZWIDGET_DBUS_SOURCES
+set(SURREALWIDGETS_DBUS_SOURCES
 	src/window/dbus/dbus_open_folder_dialog.cpp
 	src/window/dbus/dbus_open_folder_dialog.h
 	src/window/dbus/dbus_open_file_dialog.cpp
@@ -172,15 +172,15 @@ set(ZWIDGET_DBUS_SOURCES
 	src/window/dbus/dbus_save_file_dialog.h
 )
 
-set(ZWIDGET_UNIX_SOURCES
+set(SURREALWIDGETS_UNIX_SOURCES
 	src/core/resourcedata_unix.cpp
 )
 
-set(ZWIDGET_COCOA_SOURCES
+set(SURREALWIDGETS_COCOA_SOURCES
 	src/core/resourcedata_mac.mm
 )
 
-set(ZWIDGET_COCOA_ARC_SOURCES
+set(SURREALWIDGETS_COCOA_ARC_SOURCES
 	src/window/cocoa/cocoa_open_file_dialog.mm
 	src/window/cocoa/cocoa_save_file_dialog.mm
 	src/window/cocoa/cocoa_open_folder_dialog.mm
@@ -188,21 +188,21 @@ set(ZWIDGET_COCOA_ARC_SOURCES
 	src/window/cocoa/cocoa_display_window.mm
 )
 
-set(ZWIDGET_SDL2_SOURCES
+set(SURREALWIDGETS_SDL2_SOURCES
 	src/window/sdl2/sdl2_display_backend.cpp
 	src/window/sdl2/sdl2_display_backend.h
 	src/window/sdl2/sdl2_display_window.cpp
 	src/window/sdl2/sdl2_display_window.h
 )
 
-set(ZWIDGET_SDL3_SOURCES
+set(SURREALWIDGETS_SDL3_SOURCES
 	src/window/sdl3/sdl3_display_backend.cpp
 	src/window/sdl3/sdl3_display_backend.h
 	src/window/sdl3/sdl3_display_window.cpp
 	src/window/sdl3/sdl3_display_window.h
 )
 
-set(ZWIDGET_X11_SOURCES
+set(SURREALWIDGETS_X11_SOURCES
 	src/window/x11/x11_display_backend.cpp
 	src/window/x11/x11_display_backend.h
 	src/window/x11/x11_display_window.cpp
@@ -211,7 +211,7 @@ set(ZWIDGET_X11_SOURCES
 	src/window/x11/x11_connection.h
 )
 
-set(ZWIDGET_WAYLAND_SOURCES
+set(SURREALWIDGETS_WAYLAND_SOURCES
 	src/window/wayland/wayland_display_backend.cpp
 	src/window/wayland/wayland_display_backend.h
 	src/window/wayland/wayland_display_window.cpp
@@ -278,33 +278,33 @@ source_group("include\\systemdialogs" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE
 include_directories(include)
 
 # Internal include dirs for building surrealwidgets
-set(ZWIDGET_INCLUDE_DIRS include/surrealwidgets src)
+set(SURREALWIDGETS_INCLUDE_DIRS include/surrealwidgets src)
 
-set(ZWIDGET_COMPILE_OPTIONS)
+set(SURREALWIDGETS_COMPILE_OPTIONS)
 
 if(WIN32)
-	list(APPEND ZWIDGET_SOURCES ${ZWIDGET_WIN32_SOURCES})
-	set(ZWIDGET_DEFINES -DUNICODE -D_UNICODE)
-	set(ZWIDGET_LINK_OPTIONS)
+	list(APPEND SURREALWIDGETS_SOURCES ${SURREALWIDGETS_WIN32_SOURCES})
+	set(SURREALWIDGETS_DEFINES -DUNICODE -D_UNICODE)
+	set(SURREALWIDGETS_LINK_OPTIONS)
 	if(MSVC)
 		# Use all cores for compilation
-		set(ZWIDGET_COMPILE_OPTIONS ${ZWIDGET_COMPILE_OPTIONS} /MP)
+		set(SURREALWIDGETS_COMPILE_OPTIONS ${SURREALWIDGETS_COMPILE_OPTIONS} /MP)
 
 		# Ignore specific warnings
-		#set(ZWIDGET_COMPILE_OPTIONS ${ZWIDGET_COMPILE_OPTIONS} /wd4244 /wd4267 /wd4005 /wd4018)
+		#set(SURREALWIDGETS_COMPILE_OPTIONS ${SURREALWIDGETS_COMPILE_OPTIONS} /wd4244 /wd4267 /wd4005 /wd4018)
 
 		# Don't slow down std containers in debug builds
-		set(ZWIDGET_DEFINES ${ZWIDGET_DEFINES})
+		set(SURREALWIDGETS_DEFINES ${SURREALWIDGETS_DEFINES})
 
 		# Ignore warning about legacy CRT functions
-		#set(ZWIDGET_DEFINES ${ZWIDGET_DEFINES} -D_CRT_SECURE_NO_WARNINGS)
+		#set(SURREALWIDGETS_DEFINES ${SURREALWIDGETS_DEFINES} -D_CRT_SECURE_NO_WARNINGS)
 	endif()
 elseif(APPLE)
-	list(APPEND ZWIDGET_SOURCES ${ZWIDGET_COCOA_SOURCES} ${ZWIDGET_COCOA_ARC_SOURCES})
-	set_source_files_properties(${ZWIDGET_COCOA_ARC_SOURCES} PROPERTIES COMPILE_FLAGS "-x objective-c++ -fobjc-arc")
-	set(ZWIDGET_LIBS ${CMAKE_DL_LIBS} -ldl)
-	set(ZWIDGET_DEFINES -DUNIX -D_UNIX)
-	set(ZWIDGET_LINK_OPTIONS -pthread)
+	list(APPEND SURREALWIDGETS_SOURCES ${SURREALWIDGETS_COCOA_SOURCES} ${SURREALWIDGETS_COCOA_ARC_SOURCES})
+	set_source_files_properties(${SURREALWIDGETS_COCOA_ARC_SOURCES} PROPERTIES COMPILE_FLAGS "-x objective-c++ -fobjc-arc")
+	set(SURREALWIDGETS_LIBS ${CMAKE_DL_LIBS} -ldl)
+	set(SURREALWIDGETS_DEFINES -DUNIX -D_UNIX)
+	set(SURREALWIDGETS_LINK_OPTIONS -pthread)
 
 	find_library(COCOA_FRAMEWORK Cocoa)
 	if (NOT COCOA_FRAMEWORK)
@@ -336,45 +336,45 @@ elseif(APPLE)
 		message(FATAL_ERROR "UniformTypeIdentifiers framework not found")
 	endif()
 elseif(HAIKU)
-	set(ZWIDGET_SOURCES ${ZWIDGET_SOURCES} ${ZWIDGET_UNIX_SOURCES})
-	set(ZWIDGET_LIBS ${CMAKE_DL_LIBS})
-	set(ZWIDGET_DEFINES -DUNIX -D_UNIX)
-	set(ZWIDGET_LINK_OPTIONS -pthread)
+	set(SURREALWIDGETS_SOURCES ${SURREALWIDGETS_SOURCES} ${SURREALWIDGETS_UNIX_SOURCES})
+	set(SURREALWIDGETS_LIBS ${CMAKE_DL_LIBS})
+	set(SURREALWIDGETS_DEFINES -DUNIX -D_UNIX)
+	set(SURREALWIDGETS_LINK_OPTIONS -pthread)
 else()
-	set(ZWIDGET_SOURCES ${ZWIDGET_SOURCES} ${ZWIDGET_UNIX_SOURCES})
-	set(ZWIDGET_SOURCES ${ZWIDGET_SOURCES} ${ZWIDGET_X11_SOURCES})
-	set(ZWIDGET_LIBS ${CMAKE_DL_LIBS} -lX11 -lXi)
-	set(ZWIDGET_DEFINES -DUNIX -D_UNIX -DUSE_X11)
-	set(ZWIDGET_LINK_OPTIONS -pthread)
+	set(SURREALWIDGETS_SOURCES ${SURREALWIDGETS_SOURCES} ${SURREALWIDGETS_UNIX_SOURCES})
+	set(SURREALWIDGETS_SOURCES ${SURREALWIDGETS_SOURCES} ${SURREALWIDGETS_X11_SOURCES})
+	set(SURREALWIDGETS_LIBS ${CMAKE_DL_LIBS} -lX11 -lXi)
+	set(SURREALWIDGETS_DEFINES -DUNIX -D_UNIX -DUSE_X11)
+	set(SURREALWIDGETS_LINK_OPTIONS -pthread)
 	if (DBUS_FOUND)
 		include_directories("/usr/lib64/dbus-1.0/include") # Bazzite (and probably Fedora 42) keeps the platform-specific dbus headers in this folder
-		set(ZWIDGET_SOURCES ${ZWIDGET_SOURCES} ${ZWIDGET_DBUS_SOURCES})
-		set(ZWIDGET_INCLUDE_DIRS ${ZWIDGET_INCLUDE_DIRS} ${DBUS_INCLUDE_DIRS})
-		set(ZWIDGET_LIBS ${ZWIDGET_LIBS} ${DBUS_LDFLAGS})
-		set(ZWIDGET_DEFINES ${ZWIDGET_DEFINES} -DUSE_DBUS)
+		set(SURREALWIDGETS_SOURCES ${SURREALWIDGETS_SOURCES} ${SURREALWIDGETS_DBUS_SOURCES})
+		set(SURREALWIDGETS_INCLUDE_DIRS ${SURREALWIDGETS_INCLUDE_DIRS} ${DBUS_INCLUDE_DIRS})
+		set(SURREALWIDGETS_LIBS ${SURREALWIDGETS_LIBS} ${DBUS_LDFLAGS})
+		set(SURREALWIDGETS_DEFINES ${SURREALWIDGETS_DEFINES} -DUSE_DBUS)
 	endif()
 	if (WAYLANDPP_FOUND)
-		set(ZWIDGET_SOURCES ${ZWIDGET_SOURCES} ${ZWIDGET_WAYLAND_SOURCES})
-		set(ZWIDGET_INCLUDE_DIRS ${ZWIDGET_INCLUDE_DIRS} ${WAYLANDPP_INCLUDE_DIRS})
-		set(ZWIDGET_LIBS ${ZWIDGET_LIBS} ${WAYLANDPP_LDFLAGS})
-		set(ZWIDGET_DEFINES ${ZWIDGET_DEFINES} -DUSE_WAYLAND)
+		set(SURREALWIDGETS_SOURCES ${SURREALWIDGETS_SOURCES} ${SURREALWIDGETS_WAYLAND_SOURCES})
+		set(SURREALWIDGETS_INCLUDE_DIRS ${SURREALWIDGETS_INCLUDE_DIRS} ${WAYLANDPP_INCLUDE_DIRS})
+		set(SURREALWIDGETS_LIBS ${SURREALWIDGETS_LIBS} ${WAYLANDPP_LDFLAGS})
+		set(SURREALWIDGETS_DEFINES ${SURREALWIDGETS_DEFINES} -DUSE_WAYLAND)
 	endif()
 
-	set(ZWIDGET_INCLUDE_DIRS ${ZWIDGET_INCLUDE_DIRS} ${GLIB_INCLUDE_DIRS})
-	set(ZWIDGET_LIBS ${ZWIDGET_LIBS} ${GLIB_LDFLAGS} -lgio-2.0)
+	set(SURREALWIDGETS_INCLUDE_DIRS ${SURREALWIDGETS_INCLUDE_DIRS} ${GLIB_INCLUDE_DIRS})
+	set(SURREALWIDGETS_LIBS ${SURREALWIDGETS_LIBS} ${GLIB_LDFLAGS} -lgio-2.0)
 
-	set(ZWIDGET_INCLUDE_DIRS ${ZWIDGET_INCLUDE_DIRS} ${FONTCONFIG_INCLUDE_DIRS})
-	set(ZWIDGET_LIBS ${ZWIDGET_LIBS} ${FONTCONFIG_LDFLAGS})
+	set(SURREALWIDGETS_INCLUDE_DIRS ${SURREALWIDGETS_INCLUDE_DIRS} ${FONTCONFIG_INCLUDE_DIRS})
+	set(SURREALWIDGETS_LIBS ${SURREALWIDGETS_LIBS} ${FONTCONFIG_LDFLAGS})
 endif()
 
 if(SDL3_FOUND)
-	set(ZWIDGET_SOURCES ${ZWIDGET_SOURCES} ${ZWIDGET_SDL3_SOURCES})
-	set(ZWIDGET_DEFINES ${ZWIDGET_DEFINES} -DUSE_SDL3)
+	set(SURREALWIDGETS_SOURCES ${SURREALWIDGETS_SOURCES} ${SURREALWIDGETS_SDL3_SOURCES})
+	set(SURREALWIDGETS_DEFINES ${SURREALWIDGETS_DEFINES} -DUSE_SDL3)
 endif()
 
 if(SDL2_FOUND AND NOT SDL3_FOUND)
-	set(ZWIDGET_SOURCES ${ZWIDGET_SOURCES} ${ZWIDGET_SDL2_SOURCES})
-	set(ZWIDGET_DEFINES ${ZWIDGET_DEFINES} -DUSE_SDL2)
+	set(SURREALWIDGETS_SOURCES ${SURREALWIDGETS_SOURCES} ${SURREALWIDGETS_SDL2_SOURCES})
+	set(SURREALWIDGETS_DEFINES ${SURREALWIDGETS_DEFINES} -DUSE_SDL2)
 endif()
 
 if(MSVC)
@@ -383,13 +383,13 @@ else()
 	set(CXX_WARNING_FLAGS -Wall -Wpedantic)
 endif()
 
-add_library(surrealwidgets STATIC ${ZWIDGET_SOURCES} ${ZWIDGET_INCLUDES})
-target_compile_options(surrealwidgets PRIVATE ${ZWIDGET_COMPILE_OPTIONS})
-target_compile_definitions(surrealwidgets PRIVATE ${ZWIDGET_DEFINES})
-target_include_directories(surrealwidgets PRIVATE ${ZWIDGET_INCLUDE_DIRS})
-target_link_options(surrealwidgets PRIVATE ${ZWIDGET_LINK_OPTIONS})
+add_library(surrealwidgets STATIC ${SURREALWIDGETS_SOURCES} ${SURREALWIDGETS_INCLUDES})
+target_compile_options(surrealwidgets PRIVATE ${SURREALWIDGETS_COMPILE_OPTIONS})
+target_compile_definitions(surrealwidgets PRIVATE ${SURREALWIDGETS_DEFINES})
+target_include_directories(surrealwidgets PRIVATE ${SURREALWIDGETS_INCLUDE_DIRS})
+target_link_options(surrealwidgets PRIVATE ${SURREALWIDGETS_LINK_OPTIONS})
 if(APPLE)
-	target_link_libraries(surrealwidgets PRIVATE ${ZWIDGET_LIBS} ${COCOA_FRAMEWORK} ${COREVIDEO_FRAMEWORK} ${UNIFORMTYPEIDENTIFIERS_FRAMEWORK} ${QUARTZCORE_FRAMEWORK})
+	target_link_libraries(surrealwidgets PRIVATE ${SURREALWIDGETS_LIBS} ${COCOA_FRAMEWORK} ${COREVIDEO_FRAMEWORK} ${UNIFORMTYPEIDENTIFIERS_FRAMEWORK} ${QUARTZCORE_FRAMEWORK})
 	if(ENABLE_OPENGL AND OPENGL_FRAMEWORK)
 		target_link_libraries(surrealwidgets PRIVATE ${OPENGL_FRAMEWORK})
 		target_compile_definitions(surrealwidgets PRIVATE HAVE_OPENGL)
@@ -399,7 +399,7 @@ if(APPLE)
 		target_compile_definitions(surrealwidgets PRIVATE HAVE_METAL)
 	endif()
 else()
-	target_link_libraries(surrealwidgets PRIVATE ${ZWIDGET_LIBS})
+	target_link_libraries(surrealwidgets PRIVATE ${SURREALWIDGETS_LIBS})
 endif()
 if(SDL3_FOUND)
 	target_include_directories(surrealwidgets PRIVATE ${SDL3_INCLUDE_DIRS})
@@ -424,9 +424,9 @@ if(MSVC)
 	set_property(TARGET surrealwidgets PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
-option(ZWIDGET_BUILD_EXAMPLE "Build the surrealwidgets example application" ON)
+option(SURREALWIDGETS_BUILD_EXAMPLE "Build the surrealwidgets example application" ON)
 
-if(ZWIDGET_BUILD_EXAMPLE)
+if(SURREALWIDGETS_BUILD_EXAMPLE)
 	source_group("example" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/example/.+")
 	add_executable(surrealwidgets_example WIN32
 		example/example.cpp
@@ -459,7 +459,7 @@ if(ZWIDGET_BUILD_EXAMPLE)
 			target_link_libraries(surrealwidgets_example PRIVATE "-framework Metal" "-framework QuartzCore")
 		endif()
 	else()
-		target_link_libraries(surrealwidgets_example PRIVATE ${ZWIDGET_LIBS})
+		target_link_libraries(surrealwidgets_example PRIVATE ${SURREALWIDGETS_LIBS})
 	endif()
 
 	if(SDL3_FOUND)

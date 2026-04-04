@@ -1,11 +1,11 @@
-#include <zwidget/widgets/dialog/textinputdialog.h>
+#include <surrealwidgets/widgets/dialog/textinputdialog.h>
 
-#include <zwidget/widgets/pushbutton/pushbutton.h>
-#include <zwidget/widgets/lineedit/lineedit.h>
-#include <zwidget/widgets/textlabel/textlabel.h>
+#include <surrealwidgets/widgets/pushbutton/pushbutton.h>
+#include <surrealwidgets/widgets/lineedit/lineedit.h>
+#include <surrealwidgets/widgets/textlabel/textlabel.h>
 
-#include <zwidget/widgets/layout/vboxlayout.h>
-#include <zwidget/widgets/layout/hboxlayout.h>
+#include <surrealwidgets/widgets/layout/vboxlayout.h>
+#include <surrealwidgets/widgets/layout/hboxlayout.h>
 
 TextInputDialog::TextInputDialog(Widget* owner, const std::string& message, const std::string& windowTitle)
     : Dialog(owner), m_TextLabel(new TextLabel(this)), m_LineEdit(new LineEdit(this)),

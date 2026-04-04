@@ -1,4 +1,4 @@
-#include "zwidget/widgets/layout/hboxlayout.h"
+#include "surrealwidgets/widgets/layout/hboxlayout.h"
 
 HBoxLayout::HBoxLayout(Widget* parent) : Layout(parent)
 {

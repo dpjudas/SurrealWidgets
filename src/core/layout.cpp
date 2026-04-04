@@ -1,4 +1,4 @@
-#include "zwidget/core/layout.h"
+#include "surrealwidgets/core/layout.h"
 
 Stretch::Stretch()
 {

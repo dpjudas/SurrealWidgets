@@ -42,8 +42,8 @@ typedef VkResult(VKAPI_PTR* PFN_vkCreateMetalSurfaceEXT)(
 #endif
 
 #endif
-#include <zwidget/core/image.h>
-#include "zwidget/window/cocoanativehandle.h"
+#include <surrealwidgets/core/image.h>
+#include "surrealwidgets/window/cocoanativehandle.h"
 #ifdef HAVE_METAL
 #endif
 

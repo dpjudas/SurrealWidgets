@@ -1,6 +1,6 @@
 #pragma once
 
-#include "zwidget/core/layout.h"
+#include "surrealwidgets/core/layout.h"
 
 class HBoxLayout final : public Layout
 {

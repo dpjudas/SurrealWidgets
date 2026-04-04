@@ -1,6 +1,6 @@
 #pragma once
 
-#include "zwidget/window/window.h"
+#include "surrealwidgets/window/window.h"
 
 class CocoaDisplayBackend : public DisplayBackend
 {

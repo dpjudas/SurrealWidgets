@@ -1,4 +1,4 @@
-#include "zwidget/widgets/layout/vboxlayout.h"
+#include "surrealwidgets/widgets/layout/vboxlayout.h"
 
 VBoxLayout::VBoxLayout(Widget* parent) : Layout(parent)
 {

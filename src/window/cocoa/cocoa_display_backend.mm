@@ -4,7 +4,7 @@
 #include "cocoa_save_file_dialog.h"
 #include "cocoa_open_folder_dialog.h"
 
-#include <zwidget/core/timer.h>
+#include <surrealwidgets/core/timer.h>
 
 #include "AppKitWrapper.h"
 

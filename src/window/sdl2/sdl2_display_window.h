@@ -1,8 +1,8 @@
 #pragma once
 
 #include <unordered_map>
-#include <zwidget/window/window.h>
-#include <zwidget/window/sdlnativehandle.h>
+#include <surrealwidgets/window/window.h>
+#include <surrealwidgets/window/sdlnativehandle.h>
 #include <SDL2/SDL.h>
 
 class SDL2DisplayWindow : public DisplayWindow

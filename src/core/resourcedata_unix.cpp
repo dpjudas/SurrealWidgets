@@ -1,4 +1,4 @@
-#include "zwidget/core/resourcedata.h"
+#include "surrealwidgets/core/resourcedata.h"
 #include <fstream>
 #include <stdexcept>
 #include <vector>

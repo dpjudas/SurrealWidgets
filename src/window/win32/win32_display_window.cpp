@@ -1,6 +1,6 @@
 
 #include "win32_display_window.h"
-#include <zwidget/core/image.h>
+#include <surrealwidgets/core/image.h>
 #include <windowsx.h>
 #include <stdexcept>
 #include <cmath>

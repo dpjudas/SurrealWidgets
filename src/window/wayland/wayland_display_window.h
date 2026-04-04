@@ -13,8 +13,8 @@
 #include <map>
 #include <vector>
 
-#include "zwidget/window/window.h"
-#include "zwidget/window/waylandnativehandle.h"
+#include "surrealwidgets/window/window.h"
+#include "surrealwidgets/window/waylandnativehandle.h"
 
 #include <sys/mman.h>
 #include <sys/stat.h>

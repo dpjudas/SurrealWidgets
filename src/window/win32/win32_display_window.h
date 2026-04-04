@@ -4,8 +4,8 @@
 
 #include <list>
 #include <unordered_map>
-#include <zwidget/window/window.h>
-#include <zwidget/window/win32nativehandle.h>
+#include <surrealwidgets/window/window.h>
+#include <surrealwidgets/window/win32nativehandle.h>
 
 class Win32CustomCursor;
 

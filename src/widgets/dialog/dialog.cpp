@@ -1,5 +1,5 @@
-#include <zwidget/widgets/dialog/dialog.h>
-#include <zwidget/widgets/pushbutton/pushbutton.h>
+#include <surrealwidgets/widgets/dialog/dialog.h>
+#include <surrealwidgets/widgets/pushbutton/pushbutton.h>
 
 Dialog::Dialog(Widget* owner) : Widget(owner, WidgetType::Dialog)
 {

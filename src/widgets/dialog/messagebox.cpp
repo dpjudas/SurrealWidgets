@@ -1,11 +1,11 @@
-#include <zwidget/widgets/dialog/messagebox.h>
+#include <surrealwidgets/widgets/dialog/messagebox.h>
 
-#include <zwidget/widgets/pushbutton/pushbutton.h>
-#include <zwidget/widgets/textlabel/textlabel.h>
-#include <zwidget/core/layout.h>
+#include <surrealwidgets/widgets/pushbutton/pushbutton.h>
+#include <surrealwidgets/widgets/textlabel/textlabel.h>
+#include <surrealwidgets/core/layout.h>
 
-#include "zwidget/widgets/layout/hboxlayout.h"
-#include "zwidget/widgets/layout/vboxlayout.h"
+#include "surrealwidgets/widgets/layout/hboxlayout.h"
+#include "surrealwidgets/widgets/layout/vboxlayout.h"
 
 MessageBox::MessageBox(Widget* owner, const std::string& windowTitle, const std::string& message, MessageBoxIcon icon, DialogButton buttons)
         : Dialog(owner), m_MessageLabel(new TextLabel(this)), m_DialogButtons({})

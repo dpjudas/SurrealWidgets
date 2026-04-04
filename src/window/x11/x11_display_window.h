@@ -1,6 +1,6 @@
 #pragma once
 
-#include <zwidget/window/window.h>
+#include <surrealwidgets/window/window.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>

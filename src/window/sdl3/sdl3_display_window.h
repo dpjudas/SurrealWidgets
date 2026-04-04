@@ -1,11 +1,11 @@
 #pragma once
 
 #include <unordered_map>
-#include <zwidget/window/window.h>
-#include <zwidget/window/sdlnativehandle.h>
+#include <surrealwidgets/window/window.h>
+#include <surrealwidgets/window/sdlnativehandle.h>
 #include <SDL3/SDL.h>
 
-#include "zwidget/core/image.h"
+#include "surrealwidgets/core/image.h"
 
 class SDL3DisplayWindow : public DisplayWindow
 {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "zwidget/window/window.h"
-#include "zwidget/systemdialogs/save_file_dialog.h"
+#include "surrealwidgets/window/window.h"
+#include "surrealwidgets/systemdialogs/save_file_dialog.h"
 
 #include <string>
 #include <vector>

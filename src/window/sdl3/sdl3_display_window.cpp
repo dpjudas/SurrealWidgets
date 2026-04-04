@@ -6,7 +6,7 @@
 #include <SDL3/SDL_mouse.h>
 #include <cmath>
 
-#include "zwidget/core/image.h"
+#include "surrealwidgets/core/image.h"
 
 Uint32 SDL3DisplayWindow::PaintEventNumber = 0xffffffff;
 bool SDL3DisplayWindow::ExitRunLoop;
