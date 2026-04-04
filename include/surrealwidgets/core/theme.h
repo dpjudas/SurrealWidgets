@@ -15,7 +15,7 @@ class Image;
 class WidgetStyle
 {
 public:
-	WidgetStyle(WidgetStyle* parentStyle = nullptr) : ParentStyle(parentStyle) { }
+	WidgetStyle(WidgetStyle* parentStyle = nullptr);
 
 	virtual ~WidgetStyle() = default;
 	virtual void Paint(Widget* widget, Canvas* canvas, Size size) = 0;
@@ -77,44 +77,22 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<WidgetStyle>> Styles;
 };
 
-class SimpleTheme : public WidgetTheme
+class StylesheetTheme : public WidgetTheme
 {
 public:
-	struct ThemeColors
-	{
-		const Colorf bgMain;   // background
-		const Colorf fgMain;   //
-		const Colorf bgLight;  // headers / inputs
-		const Colorf fgLight;  //
-		const Colorf bgAction; // interactive elements
-		const Colorf fgAction; //
-		const Colorf bgHover;  // hover / highlight
-		const Colorf fgHover;  //
-		const Colorf bgActive; // click
-		const Colorf fgActive; //
-		const Colorf border;   // around elements
-		const Colorf divider;  // between elements
-	};
-
-	SimpleTheme(const ThemeColors& colors);
+	StylesheetTheme(const std::string& stylesheet, const std::string& themeClass);
 };
 
-class DarkWidgetTheme : public SimpleTheme
+class DarkWidgetTheme : public StylesheetTheme
 {
 public:
 	DarkWidgetTheme();
 };
 
-class LightWidgetTheme : public SimpleTheme
+class LightWidgetTheme : public StylesheetTheme
 {
 public:
 	LightWidgetTheme();
-};
-
-class StylesheetTheme : public WidgetTheme
-{
-public:
-	StylesheetTheme(const std::string& stylesheet, const std::string& themeClass);
 };
 
 enum class BorderImageValueType

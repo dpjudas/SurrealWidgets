@@ -63,6 +63,7 @@ set(SURREALWIDGETS_SOURCES
 	src/core/theme.cpp
 	src/core/theme_style_tokenizer.cpp
 	src/core/theme_style_tokenizer.h
+	src/core/theme_default_stylesheet.h
 	src/core/utf8reader.cpp
 	src/core/pathfill.cpp
 	src/core/truetypefont.cpp
@@ -426,19 +427,49 @@ if(SURREALWIDGETS_BUILD_EXAMPLE)
 		example/main.cpp
 		example/example.cpp
 		example/example.h
-		example/stylesheet.h
 	)
 	target_compile_options(surrealwidgets_example PRIVATE ${CXX_WARNING_FLAGS})
 
-#	add_custom_command(
-#		TARGET surrealwidgets_example POST_BUILD
-#		COMMAND ${CMAKE_COMMAND} -E copy
-#			"${CMAKE_CURRENT_SOURCE_DIR}/example/banner.png"
-#			"${CMAKE_CURRENT_BINARY_DIR}/banner.png"
-#		COMMAND ${CMAKE_COMMAND} -E copy
-#			"${CMAKE_CURRENT_SOURCE_DIR}/example/OpenSans.ttf"
-#			"${CMAKE_CURRENT_BINARY_DIR}/OpenSans.ttf"
-#	)
+	set(SURREALWIDGET_EXAMPLE_RESOURCES
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/banner.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/button_disabled.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/button_hot.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/button_normal.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/button_pressed.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/button_pressed_hot.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/checkbox_checked_normal.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/checkbox_unchecked_normal.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/OpenSans.ttf"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram.txt"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram01.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram02.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram03.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram04.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram05.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram06.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram07.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram08.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram09.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram10.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram11.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram12.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram13.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/Pentagram14.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/surreal-engine-icon-16.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/surreal-engine-icon-24.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/surreal-engine-icon-32.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/surreal-engine-icon-48.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/surreal-engine-icon-64.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/surreal-engine-icon-128.png"
+		"${CMAKE_CURRENT_SOURCE_DIR}/example/resources/surreal-engine-icon-256.png"
+	)
+
+	add_custom_command(
+		TARGET surrealwidgets_example POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+			${SURREALWIDGET_EXAMPLE_RESOURCES}
+			"${CMAKE_CURRENT_BINARY_DIR}"
+	)
 
 	target_include_directories(surrealwidgets_example PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/example)
 	target_link_libraries(surrealwidgets_example PRIVATE surrealwidgets)
