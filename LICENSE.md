@@ -1,6 +1,6 @@
 # License information
 
-## License for ZWidget itself
+## License for SurrealWidgets itself
 
 	Copyright (c) 2023-2026 Magnus Norddahl, Lupert Everett and contributors
 	

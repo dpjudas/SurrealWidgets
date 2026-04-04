@@ -1,2 +1,3 @@
-# ZWidget
-A framework for building user interface applications
+# SurrealWidgets
+
+SurrealWidgets is a cross platform UI framework for C++.

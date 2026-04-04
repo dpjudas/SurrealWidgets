@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
-project(zwidget)
+project(surrealwidgets)
 
 option(ENABLE_METAL "Enable Metal support for application rendering" ON)
 option(ENABLE_OPENGL "Enable OpenGL support for application rendering" ON)
@@ -107,45 +107,45 @@ set(ZWIDGET_SOURCES
 )
 
 set(ZWIDGET_INCLUDES
-	include/zwidget/core/canvas.h
-	include/zwidget/core/colorf.h
-	include/zwidget/core/font.h
-	include/zwidget/core/image.h
-	include/zwidget/core/rect.h
-	include/zwidget/core/pathfill.h
-	include/zwidget/core/span_layout.h
-	include/zwidget/core/timer.h
-	include/zwidget/core/widget.h
-	include/zwidget/core/theme.h
-	include/zwidget/core/utf8reader.h
-	include/zwidget/core/resourcedata.h
-	include/zwidget/widgets/dialog/dialog.h
-	include/zwidget/widgets/dialog/messagebox.h
-	include/zwidget/widgets/dialog/textinputdialog.h
-	include/zwidget/widgets/lineedit/lineedit.h
-	include/zwidget/widgets/mainwindow/mainwindow.h
-	include/zwidget/widgets/menubar/menubar.h
-	include/zwidget/widgets/scrollbar/scrollbar.h
-	include/zwidget/widgets/statusbar/statusbar.h
-	include/zwidget/widgets/textedit/textedit.h
-	include/zwidget/widgets/toolbar/toolbar.h
-	include/zwidget/widgets/toolbar/toolbarbutton.h
-	include/zwidget/widgets/imagebox/imagebox.h
-	include/zwidget/widgets/textlabel/textlabel.h
-	include/zwidget/widgets/pushbutton/pushbutton.h
-	include/zwidget/widgets/checkboxlabel/checkboxlabel.h
-	include/zwidget/widgets/listview/listview.h
-	include/zwidget/widgets/tabwidget/tabwidget.h
-	include/zwidget/widgets/layout/hboxlayout.h
-	include/zwidget/widgets/layout/vboxlayout.h
-	include/zwidget/window/window.h
-	include/zwidget/window/x11nativehandle.h
-	include/zwidget/window/waylandnativehandle.h
-	include/zwidget/window/win32nativehandle.h
-	include/zwidget/window/sdlnativehandle.h
-	include/zwidget/systemdialogs/open_folder_dialog.h
-	include/zwidget/systemdialogs/open_file_dialog.h
-	include/zwidget/systemdialogs/save_file_dialog.h
+	include/surrealwidgets/core/canvas.h
+	include/surrealwidgets/core/colorf.h
+	include/surrealwidgets/core/font.h
+	include/surrealwidgets/core/image.h
+	include/surrealwidgets/core/rect.h
+	include/surrealwidgets/core/pathfill.h
+	include/surrealwidgets/core/span_layout.h
+	include/surrealwidgets/core/timer.h
+	include/surrealwidgets/core/widget.h
+	include/surrealwidgets/core/theme.h
+	include/surrealwidgets/core/utf8reader.h
+	include/surrealwidgets/core/resourcedata.h
+	include/surrealwidgets/widgets/dialog/dialog.h
+	include/surrealwidgets/widgets/dialog/messagebox.h
+	include/surrealwidgets/widgets/dialog/textinputdialog.h
+	include/surrealwidgets/widgets/lineedit/lineedit.h
+	include/surrealwidgets/widgets/mainwindow/mainwindow.h
+	include/surrealwidgets/widgets/menubar/menubar.h
+	include/surrealwidgets/widgets/scrollbar/scrollbar.h
+	include/surrealwidgets/widgets/statusbar/statusbar.h
+	include/surrealwidgets/widgets/textedit/textedit.h
+	include/surrealwidgets/widgets/toolbar/toolbar.h
+	include/surrealwidgets/widgets/toolbar/toolbarbutton.h
+	include/surrealwidgets/widgets/imagebox/imagebox.h
+	include/surrealwidgets/widgets/textlabel/textlabel.h
+	include/surrealwidgets/widgets/pushbutton/pushbutton.h
+	include/surrealwidgets/widgets/checkboxlabel/checkboxlabel.h
+	include/surrealwidgets/widgets/listview/listview.h
+	include/surrealwidgets/widgets/tabwidget/tabwidget.h
+	include/surrealwidgets/widgets/layout/hboxlayout.h
+	include/surrealwidgets/widgets/layout/vboxlayout.h
+	include/surrealwidgets/window/window.h
+	include/surrealwidgets/window/x11nativehandle.h
+	include/surrealwidgets/window/waylandnativehandle.h
+	include/surrealwidgets/window/win32nativehandle.h
+	include/surrealwidgets/window/sdlnativehandle.h
+	include/surrealwidgets/systemdialogs/open_folder_dialog.h
+	include/surrealwidgets/systemdialogs/open_file_dialog.h
+	include/surrealwidgets/systemdialogs/save_file_dialog.h
 )
 
 set(ZWIDGET_WIN32_SOURCES
@@ -196,10 +196,10 @@ set(ZWIDGET_SDL2_SOURCES
 )
 
 set(ZWIDGET_SDL3_SOURCES
-		src/window/sdl3/sdl3_display_backend.cpp
-		src/window/sdl3/sdl3_display_backend.h
-		src/window/sdl3/sdl3_display_window.cpp
-		src/window/sdl3/sdl3_display_window.h
+	src/window/sdl3/sdl3_display_backend.cpp
+	src/window/sdl3/sdl3_display_backend.h
+	src/window/sdl3/sdl3_display_window.cpp
+	src/window/sdl3/sdl3_display_window.h
 )
 
 set(ZWIDGET_X11_SOURCES
@@ -255,30 +255,30 @@ source_group("src\\window\\x11" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/
 source_group("src\\window\\wayland" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/src/window/wayland/.+")
 source_group("src\\window\\dbus" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/src/window/dbus/.+")
 source_group("src\\systemdialogs" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/src/systemdialogs/.+")
-source_group("include" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/.+")
-source_group("include\\core" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/core/.+")
-source_group("include\\widgets" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/widgets/.+")
-source_group("include\\widgets\\lineedit" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/widgets/lineedit/.+")
-source_group("include\\widgets\\mainwindow" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/widgets/mainwindow/.+")
-source_group("include\\widgets\\menubar" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/widgets/menubar/.+")
-source_group("include\\widgets\\scrollbar" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/widgets/scrollbar/.+")
-source_group("include\\widgets\\statusbar" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/widgets/statusbar/.+")
-source_group("include\\widgets\\textedit" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/widgets/textedit/.+")
-source_group("include\\widgets\\toolbar" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/widgets/toolbar/.+")
-source_group("include\\widgets\\imagebox" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/widgets/imagebox/.+")
-source_group("include\\widgets\\textlabel" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/widgets/textlabel/.+")
-source_group("include\\widgets\\pushbutton" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/widgets/pushbutton/.+")
-source_group("include\\widgets\\checkboxlabel" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/widgets/checkboxlabel/.+")
-source_group("include\\widgets\\listview" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/widgets/listview/.+")
-source_group("include\\widgets\\tabwidget" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/widgets/tabwidget/.+")
-source_group("include\\window" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/window/.+")
-source_group("include\\systemdialogs" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/zwidget/systemdialogs/.+")
+source_group("include" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/.+")
+source_group("include\\core" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/core/.+")
+source_group("include\\widgets" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/widgets/.+")
+source_group("include\\widgets\\lineedit" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/widgets/lineedit/.+")
+source_group("include\\widgets\\mainwindow" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/widgets/mainwindow/.+")
+source_group("include\\widgets\\menubar" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/widgets/menubar/.+")
+source_group("include\\widgets\\scrollbar" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/widgets/scrollbar/.+")
+source_group("include\\widgets\\statusbar" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/widgets/statusbar/.+")
+source_group("include\\widgets\\textedit" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/widgets/textedit/.+")
+source_group("include\\widgets\\toolbar" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/widgets/toolbar/.+")
+source_group("include\\widgets\\imagebox" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/widgets/imagebox/.+")
+source_group("include\\widgets\\textlabel" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/widgets/textlabel/.+")
+source_group("include\\widgets\\pushbutton" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/widgets/pushbutton/.+")
+source_group("include\\widgets\\checkboxlabel" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/widgets/checkboxlabel/.+")
+source_group("include\\widgets\\listview" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/widgets/listview/.+")
+source_group("include\\widgets\\tabwidget" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/widgets/tabwidget/.+")
+source_group("include\\window" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/window/.+")
+source_group("include\\systemdialogs" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/include/surrealwidgets/systemdialogs/.+")
 
-# Include directory to external projects using zwidget
+# Include directory to external projects using surrealwidgets
 include_directories(include)
 
-# Internal include dirs for building zwidget
-set(ZWIDGET_INCLUDE_DIRS include/zwidget src)
+# Internal include dirs for building surrealwidgets
+set(ZWIDGET_INCLUDE_DIRS include/surrealwidgets src)
 
 set(ZWIDGET_COMPILE_OPTIONS)
 
@@ -383,96 +383,96 @@ else()
 	set(CXX_WARNING_FLAGS -Wall -Wpedantic)
 endif()
 
-add_library(zwidget STATIC ${ZWIDGET_SOURCES} ${ZWIDGET_INCLUDES})
-target_compile_options(zwidget PRIVATE ${ZWIDGET_COMPILE_OPTIONS})
-target_compile_definitions(zwidget PRIVATE ${ZWIDGET_DEFINES})
-target_include_directories(zwidget PRIVATE ${ZWIDGET_INCLUDE_DIRS})
-target_link_options(zwidget PRIVATE ${ZWIDGET_LINK_OPTIONS})
+add_library(surrealwidgets STATIC ${ZWIDGET_SOURCES} ${ZWIDGET_INCLUDES})
+target_compile_options(surrealwidgets PRIVATE ${ZWIDGET_COMPILE_OPTIONS})
+target_compile_definitions(surrealwidgets PRIVATE ${ZWIDGET_DEFINES})
+target_include_directories(surrealwidgets PRIVATE ${ZWIDGET_INCLUDE_DIRS})
+target_link_options(surrealwidgets PRIVATE ${ZWIDGET_LINK_OPTIONS})
 if(APPLE)
-	target_link_libraries(zwidget PRIVATE ${ZWIDGET_LIBS} ${COCOA_FRAMEWORK} ${COREVIDEO_FRAMEWORK} ${UNIFORMTYPEIDENTIFIERS_FRAMEWORK} ${QUARTZCORE_FRAMEWORK})
+	target_link_libraries(surrealwidgets PRIVATE ${ZWIDGET_LIBS} ${COCOA_FRAMEWORK} ${COREVIDEO_FRAMEWORK} ${UNIFORMTYPEIDENTIFIERS_FRAMEWORK} ${QUARTZCORE_FRAMEWORK})
 	if(ENABLE_OPENGL AND OPENGL_FRAMEWORK)
-		target_link_libraries(zwidget PRIVATE ${OPENGL_FRAMEWORK})
-		target_compile_definitions(zwidget PRIVATE HAVE_OPENGL)
+		target_link_libraries(surrealwidgets PRIVATE ${OPENGL_FRAMEWORK})
+		target_compile_definitions(surrealwidgets PRIVATE HAVE_OPENGL)
 	endif()
 	if(ENABLE_METAL AND METAL_FRAMEWORK)
-		target_link_libraries(zwidget PRIVATE ${METAL_FRAMEWORK} ${QUARTZCORE_FRAMEWORK})
-		target_compile_definitions(zwidget PRIVATE HAVE_METAL)
+		target_link_libraries(surrealwidgets PRIVATE ${METAL_FRAMEWORK} ${QUARTZCORE_FRAMEWORK})
+		target_compile_definitions(surrealwidgets PRIVATE HAVE_METAL)
 	endif()
 else()
-	target_link_libraries(zwidget PRIVATE ${ZWIDGET_LIBS})
+	target_link_libraries(surrealwidgets PRIVATE ${ZWIDGET_LIBS})
 endif()
 if(SDL3_FOUND)
-	target_include_directories(zwidget PRIVATE ${SDL3_INCLUDE_DIRS})
+	target_include_directories(surrealwidgets PRIVATE ${SDL3_INCLUDE_DIRS})
 	if(TARGET SDL3::SDL3)
-		target_link_libraries(zwidget PRIVATE SDL3::SDL3)
+		target_link_libraries(surrealwidgets PRIVATE SDL3::SDL3)
 	else()
-		target_link_libraries(zwidget PRIVATE ${SDL3_LIBRARY})
+		target_link_libraries(surrealwidgets PRIVATE ${SDL3_LIBRARY})
 	endif()
 endif()
 if(SDL2_FOUND AND NOT SDL3_FOUND)
-	target_include_directories(zwidget PRIVATE ${SDL2_INCLUDE_DIRS})
+	target_include_directories(surrealwidgets PRIVATE ${SDL2_INCLUDE_DIRS})
 	if(TARGET SDL2::SDL2)
-		target_link_libraries(zwidget PRIVATE SDL2::SDL2)
+		target_link_libraries(surrealwidgets PRIVATE SDL2::SDL2)
 	else()
-		target_link_libraries(zwidget PRIVATE ${SDL2_LIBRARY})
+		target_link_libraries(surrealwidgets PRIVATE ${SDL2_LIBRARY})
 	endif()
 endif()
-set_target_properties(zwidget PROPERTIES CXX_STANDARD 20)
-target_compile_options(zwidget PRIVATE ${CXX_WARNING_FLAGS})
+set_target_properties(surrealwidgets PROPERTIES CXX_STANDARD 20)
+target_compile_options(surrealwidgets PRIVATE ${CXX_WARNING_FLAGS})
 
 if(MSVC)
-	set_property(TARGET zwidget PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+	set_property(TARGET surrealwidgets PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
-option(ZWIDGET_BUILD_EXAMPLE "Build the zwidget example application" ON)
+option(ZWIDGET_BUILD_EXAMPLE "Build the surrealwidgets example application" ON)
 
 if(ZWIDGET_BUILD_EXAMPLE)
 	source_group("example" REGULAR_EXPRESSION "${CMAKE_CURRENT_SOURCE_DIR}/example/.+")
-	add_executable(zwidget_example WIN32
+	add_executable(surrealwidgets_example WIN32
 		example/example.cpp
 		example/stylesheet.h
 	)
-	target_compile_options(zwidget_example PRIVATE ${CXX_WARNING_FLAGS})
+	target_compile_options(surrealwidgets_example PRIVATE ${CXX_WARNING_FLAGS})
 
-	add_custom_command(
-		TARGET zwidget_example POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy
-			"${CMAKE_CURRENT_SOURCE_DIR}/example/banner.png"
-			"${CMAKE_CURRENT_BINARY_DIR}/banner.png"
-		COMMAND ${CMAKE_COMMAND} -E copy
-			"${CMAKE_CURRENT_SOURCE_DIR}/example/OpenSans.ttf"
-			"${CMAKE_CURRENT_BINARY_DIR}/OpenSans.ttf"
-	)
+#	add_custom_command(
+#		TARGET surrealwidgets_example POST_BUILD
+#		COMMAND ${CMAKE_COMMAND} -E copy
+#			"${CMAKE_CURRENT_SOURCE_DIR}/example/banner.png"
+#			"${CMAKE_CURRENT_BINARY_DIR}/banner.png"
+#		COMMAND ${CMAKE_COMMAND} -E copy
+#			"${CMAKE_CURRENT_SOURCE_DIR}/example/OpenSans.ttf"
+#			"${CMAKE_CURRENT_BINARY_DIR}/OpenSans.ttf"
+#	)
 
-	target_include_directories(zwidget_example PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/example)
-	target_link_libraries(zwidget_example PRIVATE zwidget)
+	target_include_directories(surrealwidgets_example PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/example)
+	target_link_libraries(surrealwidgets_example PRIVATE surrealwidgets)
 
 	if(WIN32)
-		target_compile_definitions(zwidget_example PRIVATE UNICODE _UNICODE)
-		target_link_libraries(zwidget_example PRIVATE gdi32 user32 shell32 comdlg32)
+		target_compile_definitions(surrealwidgets_example PRIVATE UNICODE _UNICODE)
+		target_link_libraries(surrealwidgets_example PRIVATE gdi32 user32 shell32 comdlg32)
 	elseif(APPLE)
-		target_link_libraries(zwidget_example PRIVATE "-framework Cocoa" "-framework CoreVideo")
+		target_link_libraries(surrealwidgets_example PRIVATE "-framework Cocoa" "-framework CoreVideo")
 		if(ENABLE_OPENGL AND OPENGL_FRAMEWORK)
-			target_link_libraries(zwidget_example PRIVATE "-framework OpenGL")
+			target_link_libraries(surrealwidgets_example PRIVATE "-framework OpenGL")
 		endif()
 		if(ENABLE_METAL AND METAL_FRAMEWORK)
-			target_link_libraries(zwidget_example PRIVATE "-framework Metal" "-framework QuartzCore")
+			target_link_libraries(surrealwidgets_example PRIVATE "-framework Metal" "-framework QuartzCore")
 		endif()
 	else()
-		target_link_libraries(zwidget_example PRIVATE ${ZWIDGET_LIBS})
+		target_link_libraries(surrealwidgets_example PRIVATE ${ZWIDGET_LIBS})
 	endif()
 
 	if(SDL3_FOUND)
-		target_link_libraries(zwidget_example PRIVATE SDL3::SDL3)
+		target_link_libraries(surrealwidgets_example PRIVATE SDL3::SDL3)
 	endif()
 
 	if(SDL2_FOUND AND NOT SDL3_FOUND)
-		target_link_libraries(zwidget_example PRIVATE SDL2::SDL2)
+		target_link_libraries(surrealwidgets_example PRIVATE SDL2::SDL2)
 	endif()
 
-	set_target_properties(zwidget_example PROPERTIES CXX_STANDARD 20)
+	set_target_properties(surrealwidgets_example PROPERTIES CXX_STANDARD 20)
 
 	if(MSVC)
-		set_property(TARGET zwidget_example PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+		set_property(TARGET surrealwidgets_example PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 	endif()
 endif()
