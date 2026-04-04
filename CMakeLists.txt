@@ -99,8 +99,6 @@ set(SURREALWIDGETS_SOURCES
 	src/window/stub/stub_open_file_dialog.h
 	src/window/stub/stub_save_file_dialog.cpp
 	src/window/stub/stub_save_file_dialog.h
-	src/window/ztimer/ztimer.h
-	src/window/ztimer/ztimer.cpp
 	src/systemdialogs/open_folder_dialog.cpp
 	src/systemdialogs/open_file_dialog.cpp
 	src/systemdialogs/save_file_dialog.cpp
@@ -216,6 +214,8 @@ set(SURREALWIDGETS_WAYLAND_SOURCES
 	src/window/wayland/wayland_display_backend.h
 	src/window/wayland/wayland_display_window.cpp
 	src/window/wayland/wayland_display_window.h
+	src/window/wayland/wayland_timer.h
+	src/window/wayland/wayland_timer.cpp
 	src/window/wayland/wl_fractional_scaling_protocol.cpp
 	src/window/wayland/wl_fractional_scaling_protocol.hpp
 	src/window/wayland/wl_cursor_shape.cpp
