@@ -404,7 +404,9 @@ bool TreeViewBody::OnMouseDoubleclick(const Point& pos, InputKey key)
 {
 	if (key == InputKey::LeftMouse)
 	{
-		m_TreeView->Activate();
+	    int index = (int)((pos.y + m_TreeView->m_Scrollbar->GetPosition()) / GetItemHeight());
+	    if (index == m_TreeView->m_SelectedItem)
+	        m_TreeView->Activate();
 	}
 	return true;
 }
