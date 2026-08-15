@@ -18,7 +18,7 @@ if (UNIX AND NOT APPLE)
 	if (!DBUS_FOUND)
 		pkg_check_modules(DBUS REQUIRED dbus) # Fedora Linux looks for dbus instead
 	endif()
-	find_package(OpenGL COMPONENTS EGL)
+	find_package(OpenGL REQUIRED COMPONENTS EGL)
 	pkg_check_modules(WAYLANDPP
 		wayland-client
 		wayland-client++
