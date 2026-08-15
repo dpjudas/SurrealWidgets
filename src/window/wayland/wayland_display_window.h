@@ -137,6 +137,11 @@ public:
 
 	bool IsPopupWindow() const { return m_WidgetType == WidgetType::Popup; }
 
+	void CreateGLContext() override;
+	void MakeGLContextCurrent() override;
+	bool SetGLSwapInterval(int interval) override;
+	void SwapGLBuffers() override;
+
 private:
 	// Event handlers as otherwise linking DisplayWindowHost On...() functions with Wayland events directly crashes the app
 	// Alternatively to avoid crashes one can capture by value ([=]) instead of reference ([&])
@@ -198,6 +203,11 @@ private:
 
 	wayland::xdg_activation_token_v1_t m_WindowActivationToken;
 	std::string m_ActivationTokenString;
+
+	wayland::egl_window_t m_EGLWindow;
+	EGLDisplay m_EGLDisplay = nullptr;
+	EGLContext m_EGLContext = nullptr;
+	EGLSurface m_EGLSurface = nullptr;
 
 	bool isFullscreen = false;
 
