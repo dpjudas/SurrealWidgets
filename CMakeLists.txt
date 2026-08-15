@@ -18,12 +18,14 @@ if (UNIX AND NOT APPLE)
 	if (!DBUS_FOUND)
 		pkg_check_modules(DBUS REQUIRED dbus) # Fedora Linux looks for dbus instead
 	endif()
+	find_package(OpenGL COMPONENTS EGL)
 	pkg_check_modules(WAYLANDPP
 		wayland-client
 		wayland-client++
 		wayland-client-extra++
 		wayland-client-unstable++
 		wayland-cursor++
+		wayland-egl++
 		xkbcommon>=0.5.0
 	)
 	pkg_check_modules(GLIB glib-2.0)
@@ -359,6 +361,10 @@ else()
 		set(SURREALWIDGETS_INCLUDE_DIRS ${SURREALWIDGETS_INCLUDE_DIRS} ${DBUS_INCLUDE_DIRS})
 		set(SURREALWIDGETS_LIBS ${SURREALWIDGETS_LIBS} ${DBUS_LDFLAGS})
 		set(SURREALWIDGETS_DEFINES ${SURREALWIDGETS_DEFINES} -DUSE_DBUS)
+	endif()
+	if (OPENGL_FOUND)
+		set(SURREALWIDGETS_INCLUDE_DIRS ${SURREALWIDGETS_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${OPENGL_EGL_INCLUDE_DIRS})
+		set(SURREALWIDGETS_LIBS ${SURREALWIDGETS_LIBS} ${OPENGL_opengl_LIBRARY} ${OPENGL_egl_LIBRARY})
 	endif()
 	if (WAYLANDPP_FOUND)
 		set(SURREALWIDGETS_SOURCES ${SURREALWIDGETS_SOURCES} ${SURREALWIDGETS_WAYLAND_SOURCES})
