@@ -57,6 +57,12 @@ SDL3DisplayWindow::~SDL3DisplayWindow()
 		BackBufferTexture = nullptr;
 	}
 
+	if (m_GLContext)
+	{
+		SDL_GL_DestroyContext(m_GLContext);
+		m_GLContext = nullptr;
+	}
+
 	if (RendererHandle)
 		SDL_DestroyRenderer(RendererHandle);
 	SDL_DestroyWindow(Handle.window);

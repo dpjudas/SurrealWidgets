@@ -50,6 +50,12 @@ SDL2DisplayWindow::~SDL2DisplayWindow()
 		BackBufferTexture = nullptr;
 	}
 
+	if (m_GLContext)
+	{
+		SDL_GL_DeleteContext(m_GLContext);
+		m_GLContext = nullptr;
+	}
+
 	if (RendererHandle)
 		SDL_DestroyRenderer(RendererHandle);
 	SDL_DestroyWindow(Handle.window);
