@@ -625,6 +625,34 @@ void SDL2DisplayWindow::OnTimerEvent(const SDL_UserEvent& event)
 	func->second();
 }
 
+void SDL2DisplayWindow::CreateGLContext()
+{
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+	m_GLContext = SDL_GL_CreateContext(Handle.window);
+}
+
+void SDL2DisplayWindow::MakeGLContextCurrent()
+{
+	if (!m_GLContext)
+		return;
+
+	SDL_GL_MakeCurrent(Handle.window, m_GLContext);
+}
+
+bool SDL2DisplayWindow::SetGLSwapInterval(int interval)
+{
+	SDL_GL_SetSwapInterval(interval);
+	return true;
+}
+
+void SDL2DisplayWindow::SwapGLBuffers()
+{
+	SDL_GL_SwapWindow(Handle.window);
+}
+
 InputKey SDL2DisplayWindow::ScancodeToInputKey(SDL_Scancode keycode)
 {
 	switch (keycode)
