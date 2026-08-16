@@ -541,8 +541,8 @@ void WaylandDisplayWindow::CreateGLContext()
 	EGLConfig config;
 	EGLint config_count;
 
-	if (!eglChooseConfig(backend->s_waylandDisplay, confAttrs, &config, 1, &config_count) || config_count != 1)
-		throw std::runtime_error("Cannot choose EGL configs");
+	if (!eglChooseConfig(m_EGLDisplay, confAttrs, &config, 1, &config_count) || config_count != 1)
+		throw std::runtime_error("Cannot choose EGL config. Error code: " + std::to_string(eglGetError()));
 
 	m_EGLContext = eglCreateContext(m_EGLDisplay, config, EGL_NO_CONTEXT, ctxAttrs);
 	if (m_EGLContext == EGL_NO_CONTEXT)

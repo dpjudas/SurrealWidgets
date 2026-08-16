@@ -1225,8 +1225,8 @@ void X11DisplayWindow::CreateGLContext()
 	EGLConfig configs[32];
 	EGLint config_count = 32;
 
-	if (!eglChooseConfig(display, confAttrs, configs, config_count, &config_count) || config_count == 0)
-		throw std::runtime_error("Cannot choose EGL configs");
+	if (!eglChooseConfig(m_EGLDisplay, confAttrs, configs, config_count, &config_count) || config_count == 0)
+		throw std::runtime_error("Cannot choose EGL config. Error code: " + std::to_string(eglGetError()));
 
 	for (EGLint i = 0 ; i < config_count ; i++)
 	{
@@ -1235,7 +1235,7 @@ void X11DisplayWindow::CreateGLContext()
 			EGL_NONE
 		};
 
-		m_EGLSurface = eglCreateWindowSurface(m_EGLDisplay, EGL_NO_CONFIG_KHR, window, nullptr);
+		m_EGLSurface = eglCreateWindowSurface(m_EGLDisplay, configs[i], window, nullptr);
 		if (m_EGLSurface != EGL_NO_SURFACE)
 			break;
 	}
