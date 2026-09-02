@@ -308,7 +308,7 @@ int example(Backend backend, Theme theme)
 	// just for testing themes
 	switch (theme)
 	{
-		case Theme::Default: WidgetTheme::SetTheme(std::make_unique<DarkWidgetTheme>()); break;
+		case Theme::Default: WidgetTheme::SetTheme(std::make_unique<BordeauxWidgetTheme>()); break;
 		case Theme::Dark:    WidgetTheme::SetTheme(std::make_unique<DarkWidgetTheme>()); break;
 		case Theme::Light:   WidgetTheme::SetTheme(std::make_unique<LightWidgetTheme>()); break;
 		case Theme::Dust:    WidgetTheme::SetTheme(std::make_unique<DustWidgetTheme>()); break;
@@ -326,6 +326,8 @@ int example(Backend backend, Theme theme)
 
 	auto launcher = new LauncherWindow();
 	launcher->SetFrameGeometry((Widget::GetScreenSize().width - 615.0) * 0.5, (Widget::GetScreenSize().height - 668.0) * 0.5, 615.0, 668.0);
+	launcher->SetWindowMinSize(600, 400);
+	launcher->SetWindowMaxSize(1280, 960);
 	launcher->Show();
 
 	DisplayWindow::RunLoop();
