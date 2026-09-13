@@ -457,6 +457,11 @@ textedit {
 	selection-background-nofocus: var(--tertiary-400);
 }
 
+slider {
+	track-background-color: var(--secondary-400);
+	knob-background-color: var(--secondary-500);
+}
+
 )xxxx";
 // compilers suck!
 static const char* theme_default_stylesheet2 = R"xxxx(
