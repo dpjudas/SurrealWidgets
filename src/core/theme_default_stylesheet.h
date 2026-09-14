@@ -460,6 +460,7 @@ textedit {
 slider {
 	track-background-color: var(--secondary-400);
 	knob-background-color: var(--secondary-500);
+	tick-color: var(--secondary-300);
 }
 
 )xxxx";

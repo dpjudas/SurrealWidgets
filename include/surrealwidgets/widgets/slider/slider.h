@@ -4,6 +4,16 @@
 #include "../../core/timer.h"
 #include "../../core/orientation.h"
 
+enum TickPosition : uint8_t
+{
+    NoTicks,
+    TicksAbove,
+    TicksBelow,
+    TicksBothSides,
+    TicksLeft = TicksAbove,
+    TicksRight = TicksBelow
+};
+
 class Slider : public Widget
 {
 public:
@@ -20,6 +30,9 @@ public:
 
     int GetValue() const { return m_value; }
     void SetValue(int newValue);
+
+    TickPosition GetTickPosition() const { return m_TickPosition; }
+    void SetTickPosition(TickPosition newPos);
 
     Orientation GetOrientation() const { return m_Orientation; }
     void SetOrientation(Orientation newOrientation);
@@ -54,6 +67,8 @@ private:
     bool m_MousePressed = false;
 
     Timer* m_MouseDownTimer;
+
+    TickPosition m_TickPosition = NoTicks;
 
     void UpdatePartPositions();
     void SetKnobValue(int newValue);

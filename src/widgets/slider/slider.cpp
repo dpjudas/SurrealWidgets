@@ -62,6 +62,12 @@ void Slider::SetValue(int newValue)
     SetKnobValue(newValue);
 }
 
+void Slider::SetTickPosition(TickPosition newPos)
+{
+    m_TickPosition = newPos;
+    UpdatePartPositions();
+}
+
 void Slider::SetKnobValue(int newValue)
 {
     if (newValue < m_minValue)
@@ -164,6 +170,9 @@ void Slider::OnPaint(Canvas* canvas)
     double th = GetStyleDouble("track-image-height");
     Colorf trackColor = GetStyleColor("track-background-color");
     Colorf knobColor = GetStyleColor("knob-background-color");
+    Colorf tickColor = GetStyleColor("tick-color");
+
+    auto knobImage = GetStyleImage("knob-image");
 
     double track_height = 4.0;
 
@@ -197,22 +206,59 @@ void Slider::OnPaint(Canvas* canvas)
         canvas->fillRect(trackRect, trackColor);
     }
 
-    auto knobImage = GetStyleImage("knob-image");
-
+    // Calculate knob geometry
     if (knobImage)
     {
         if (kw == 0.0) kw = (double)knobImage->GetWidth();
         if (kh == 0.0) kh = (double)knobImage->GetHeight();
-
-        canvas->drawImage(knobImage, m_knobRect);
     }
     else
     {
         if (kw == 0.0) kw = 8.f;
         if (kh == 0.0) kh = h - 4.f;
-
-        canvas->fillRect(m_knobRect, knobColor);
     }
+
+    // Draw ticks
+    if (m_TickPosition != NoTicks)
+    {
+        auto numTicks = m_maxValue - m_minValue + 1;
+
+        if (m_Orientation == Orientation::Horizontal)
+        {
+            double tickLength = kh / 4;
+
+            for (int i = m_minValue ; i <= m_maxValue ; i++)
+            {
+                auto tickx = 0.5 * kw + (i - m_minValue) * (w - kw) / (m_maxValue - m_minValue);
+
+                if (m_TickPosition & TicksAbove)
+                    canvas->line({ tickx, (h - th) / 2 - tickLength }, { tickx, (h - th) / 2}, tickColor);
+
+                if (m_TickPosition & TicksBelow)
+                    canvas->line({tickx, (h + th) / 2 }, {tickx, (h + th) / 2 + tickLength }, tickColor);
+            }
+        }
+        else
+        {
+            double tickLength = kw / 4;
+
+            for (int i = m_minValue ; i <= m_maxValue ; i++)
+            {
+                auto ticky = 0.5 * kh + (i - m_minValue) * (h - kh) / (m_maxValue - m_minValue);
+
+                if (m_TickPosition & TicksLeft)
+                    canvas->line({ (w - tw) / 2 - tickLength, ticky - tickLength }, { (w - tw) / 2, ticky}, tickColor);
+
+                if (m_TickPosition & TicksRight)
+                    canvas->line({(w + tw) / 2, ticky }, {(w + tw) / 2 + tickLength, ticky }, tickColor);
+            }
+        }
+    }
+
+    if (knobImage)
+        canvas->drawImage(knobImage, m_knobRect);
+    else
+        canvas->fillRect(m_knobRect, knobColor);
 }
 
 void Slider::OnGeometryChanged()
