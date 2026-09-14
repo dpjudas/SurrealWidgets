@@ -203,6 +203,8 @@ LauncherWindowTab3::LauncherWindowTab3(Widget parent)
 	m_TreeView = new TreeView(this);
 	m_Slider = new Slider(this);
 
+	m_Slider->SetTickPosition(TicksBothSides);
+
 	Label->SetText("Oh my, even more widgets");
 	Popup->SetText("Click me.");
 	QuestionPopup->SetText("Pop up a question...");
